@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'user',
 ]
 
 MIDDLEWARE = [
@@ -75,8 +76,13 @@ WSGI_APPLICATION = 'slicedtv.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'djongo',
+        'NAME': 'slicedtv_client',
+        'ENFORCE_SCHEMA': False,
+        'HOST': 'mongodb+srv://slicedtv_admin:dev4780@cluster0.zxwvu.mongodb.net/slicedtv_client?retryWrites=true&w=majority',
+        'USER': 'slicedtv_admin',
+        'PASSWORD': 'dev4780',
+
     }
 }
 
@@ -118,3 +124,6 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
+
+#User Model
+AUTH_USER_MODEL = 'user.User'
