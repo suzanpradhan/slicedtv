@@ -4,6 +4,7 @@ from rest_framework import serializers
 # Internal Import
 from . import models
 
+
 class UserRegistrationSerializer(serializers.ModelSerializer):
     """ Serializer for User Registration """
 
@@ -16,10 +17,10 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
                 'style': {'input_type': 'password'}
             }
         }
-    
+
     def create(self, validated_data):
         """Create and return a new user"""
-        user = models.objects.create_user(
+        user = models.User.objects.create_user(
             username=validated_data['username'],
             email=validated_data['email'],
             password=validated_data['password'],
