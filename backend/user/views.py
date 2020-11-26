@@ -1,4 +1,5 @@
 # External Import
+from django.conf import settings
 from rest_framework import generics, response, status
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.sites.shortcuts import get_current_site
@@ -50,4 +51,27 @@ class UserRegistrationView(generics.GenericAPIView):
 
 class VerifyEmail(generics.GenericAPIView):
     """ Verifying User Email"""
-    pass
+
+    def get(self, request):
+        """ GET method which takes token which was sent to the user's email after registration """
+        
+        token = request.GET.get('token')
+
+        try:
+            # Working with received token
+            received_token = jwt.decode(token, settings.SECRET_KEY)
+            user = models.User.objects.get(id=received_token['user_id'])
+
+            # Changing User status to verified
+            if not user.is_verified:
+                user.is_verified = True
+                user.save()
+
+            return response.Response({'message': 'Email Successfully Activated'})
+
+        except jwt.ExpiredSignatureError as identifier:
+            return response.Response({'error': 'Activation Link Expired'}, status=status.HTTP_400_BAD_REQUEST)
+            # ! Should send the user another activation link by asking the user.
+
+        except jwt.exception.DecodeError as identifier:
+            return response.Response({'error': 'Invalid Activation Link'}, status=status.HTTP_400_BAD_REQUEST)
