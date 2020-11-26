@@ -54,7 +54,7 @@ class VerifyEmail(generics.GenericAPIView):
 
     def get(self, request):
         """ GET method which takes token which was sent to the user's email after registration """
-        
+
         token = request.GET.get('token')
 
         try:
@@ -75,3 +75,17 @@ class VerifyEmail(generics.GenericAPIView):
 
         except jwt.exception.DecodeError as identifier:
             return response.Response({'error': 'Invalid Activation Link'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class UserLoginAPIView(generics.GenericAPIView):
+    """Login User in """
+
+    serializer_class = serializers.UserLoginSerializer
+
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        return response.Response(serializer.data, status=status.HTTP_200_OK)
+
+    

@@ -1,9 +1,11 @@
+# External Import
 from djongo import models
 from django.contrib.auth.models import (
     AbstractBaseUser,
     BaseUserManager,
     PermissionsMixin,
 )
+from rest_framework_simplejwt.tokens import RefreshToken
 
 
 class UserManager(BaseUserManager):
@@ -55,3 +57,11 @@ class User(AbstractBaseUser, PermissionsMixin):
     def __str__(self):
         """Return string representation of the user's username"""
         return self.username
+
+    def tokens(self):
+        """ Genreate Access and Refresh Token for current user """
+        user_token = RefreshToken.for_user(self)
+        return {
+            'refresh': str(user_token),
+            'access': str(user_token.access_token),
+        }
