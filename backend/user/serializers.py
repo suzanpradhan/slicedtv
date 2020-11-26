@@ -2,9 +2,14 @@
 from rest_framework import serializers
 from django.contrib import auth
 from rest_framework.exceptions import AuthenticationFailed
+from django.contrib.auth.tokens import PasswordResetTokenGenerator
+from django.utils.encoding import smart_str, force_str, smart_bytes, DjangoUnicodeDecodeError
+from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
+
 
 # Internal Import
 from . import models
+from .utils import Util
 
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
@@ -34,9 +39,10 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
 class UserLoginSerializer(serializers.ModelSerializer):
     """Serializer for Login"""
     username = serializers.CharField()
+
     class Meta:
         model = models.User
-        fields = ['username', 'password','email', 'tokens']
+        fields = ['username', 'password', 'email', 'tokens']
         extra_kwargs = {
             'tokens': {
                 'read_only': True,
@@ -53,7 +59,6 @@ class UserLoginSerializer(serializers.ModelSerializer):
     def validate(self, attrs):
         username = attrs.get('username', '')
         password = attrs.get('password', '')
-        print("Hello WOrld ------------------------------")
         current_user = auth.authenticate(username=username, password=password)
 
         if not current_user:
@@ -70,3 +75,55 @@ class UserLoginSerializer(serializers.ModelSerializer):
             'email': current_user.email,
             'tokens': current_user.tokens,
         }
+
+
+class RequestUserPasswordResetByEmailSerializer(serializers.Serializer):
+    """Serializer For User Request Password Reset"""
+
+    email = serializers.EmailField()
+
+    class Meta:
+        fields = ['email']
+
+
+class ChangeUserPasswordAPISerializer(serializers.Serializer):
+    """ Patch Password """
+    password = serializers.CharField()
+    token = serializers.CharField(min_length=1)
+    uidb64 = serializers.CharField(min_length=1)
+
+    class Meta:
+        model = models.User
+        fields = ('password', 'token', 'uidb64')
+        extra_kwargs = {
+            'password': {
+                'write_only': True,
+                'style': {'input_type': 'password'}
+            },
+            'token': {
+                'write_only': True,
+            },
+            'uidb64': {
+                'write_only': True,
+            },
+        }
+
+    def validate(self, attrs):
+        """Validating the request"""
+        try:
+            password = attrs.get('password')
+            token = attrs.get('token')
+            uidb64 = attrs.get('uidb64')
+
+            id = force_str(urlsafe_base64_decode(uidb64))
+            current_user = models.User.objects.get(id=id)
+
+            if not PasswordResetTokenGenerator().check_token(user=current_user, token=token):
+                raise AuthenticationFailed("Link Invalid", 401)
+            current_user.set_password(password)
+            current_user.save()
+            return current_user
+
+        except Exception as error:
+            raise AuthenticationFailed("Linkk Invalid", 401)
+        return super().validate(attrs)

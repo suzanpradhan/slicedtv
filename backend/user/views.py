@@ -5,7 +5,9 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.sites.shortcuts import get_current_site
 from django.urls import reverse
 import jwt
-
+from django.contrib.auth.tokens import PasswordResetTokenGenerator
+from django.utils.encoding import smart_str, force_str, smart_bytes, DjangoUnicodeDecodeError
+from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 
 # Internal Import
 from . import serializers
@@ -88,4 +90,76 @@ class UserLoginAPIView(generics.GenericAPIView):
 
         return response.Response(serializer.data, status=status.HTTP_200_OK)
 
-    
+
+class RequestUserPasswordResetByEmail(generics.GenericAPIView):
+    """ Request to reset the password """
+
+    serializer_class = serializers.RequestUserPasswordResetByEmailSerializer
+
+    def post(self, request):
+        """ POST method for password Reset """
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        email = request.data['email']
+        current_user = models.User.objects.filter(email=email)
+
+        if current_user.exists():
+            current_user = current_user.first()
+            uidb64 = urlsafe_base64_encode(smart_bytes(current_user.id))
+            token = PasswordResetTokenGenerator().make_token(user=current_user)
+            # Sending Verification URL to the current_user
+            current_site = get_current_site(request=request).domain
+            relative_link = reverse(
+                'confirm-password-reset', kwargs={'uidb64': uidb64, 'token': token})
+            absolute_url = f"http://{current_site}{relative_link}"
+            email_body = f"Namaste {current_user.username}\n Use link below to Reset your Password.\n{absolute_url}"
+            email_message = {
+                'email_body': email_body,
+                'email_subject': "Reset your password for SlicedTv Account",
+                'to_email': current_user.email
+            }
+            # Sending from utils.py file
+            Util.send_email(email_message)
+
+        # The response will be success even if the email is not found for security reasons
+        return response.Response({'success': True, 'meassage': 'Email Sent'}, status=status.HTTP_200_OK)
+
+
+class ResetPasswordTokenCheckAPI(generics.GenericAPIView):
+    """Check if the password reset token is valid"""
+
+    def get(self, request, uidb64, token):
+        """ Check if the token is valid  """
+        try:
+            id = smart_bytes(urlsafe_base64_decode(uidb64))
+            current_user = models.User.objects.get(id=id)
+
+            if not PasswordResetTokenGenerator().check_token(user=current_user, token=token):
+                return response.Response(
+                    {'error': 'Token is not valid, request another'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            return response.Response({
+                'success': True,
+                'message': 'Credentials Valid',
+                'uidb64': uidb64,
+                'token': token,
+            }, status=status.HTTP_200_OK)
+
+        except DjangoUnicodeDecodeError as identifier:
+            return response.Response(
+                {'error': 'Token is not valid, request another'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+
+class ChangeUserPasswordAPI(generics.GenericAPIView):
+    """Change the password after confirming email"""
+
+    serializer_class = serializers.ChangeUserPasswordAPISerializer
+
+    def patch(self, request):
+        """ Change the user password """
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        return response.Response({'success': True, 'message': 'Password Reset Successful'}, status=status.HTTP_200_OK)
