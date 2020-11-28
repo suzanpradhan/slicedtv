@@ -47,7 +47,7 @@ class UserLoginSerializer(serializers.ModelSerializer):
             'access': current_user.tokens()['access'],
             'refresh': current_user.tokens()['refresh']
         }
-    
+
     class Meta:
         model = models.User
         fields = ['username', 'password', 'email', 'tokens']
@@ -147,9 +147,12 @@ class ChangePasswordSerializer(serializers.Serializer):
         user = self.context['request'].user
         if not user.check_password(attrs.get('old_password')):
             raise serializers.ValidationError({'error': 'Wrong password.'})
-        
+        elif attrs.get('old_password') == attrs.get('new_password'):
+            raise serializers.ValidationError(
+                {"error": "New password is same as Old"})
+
         return attrs
-    
+
     def save(self, **kwargs):
         password = self.validated_data['new_password']
         user = self.context['request'].user
