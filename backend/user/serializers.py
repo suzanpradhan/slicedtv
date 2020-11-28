@@ -127,3 +127,24 @@ class ChangeUserPasswordAPISerializer(serializers.Serializer):
         except Exception as error:
             raise AuthenticationFailed("Linkk Invalid", 401)
         return super().validate(attrs)
+
+
+class ChangePasswordSerializer(serializers.Serializer):
+    """ Change password when user is logged In  """
+
+    old_password = serializers.CharField(write_only=True, required=True)
+    new_password = serializers.CharField(write_only=True, required=False)
+
+    def validate(self, attrs):
+        user = self.context['request'].user
+        if not user.check_password(attrs.get('old_password')):
+            raise serializers.ValidationError({'error': 'Wrong password.'})
+        
+        return attrs
+    
+    def save(self, **kwargs):
+        password = self.validated_data['new_password']
+        user = self.context['request'].user
+        user.set_password(password)
+        user.save()
+        return user

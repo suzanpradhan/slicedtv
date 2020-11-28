@@ -8,6 +8,7 @@ import jwt
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.utils.encoding import smart_str, force_str, smart_bytes, DjangoUnicodeDecodeError
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
+from rest_framework import permissions
 
 # Internal Import
 from . import serializers
@@ -163,3 +164,15 @@ class ChangeUserPasswordAPI(generics.GenericAPIView):
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
         return response.Response({'success': True, 'message': 'Password Reset Successful'}, status=status.HTTP_200_OK)
+
+
+class ChangePasswordView(generics.UpdateAPIView):
+    """ Change Password when User is Logged In """
+
+    serializer_class = serializers.ChangePasswordSerializer
+
+    def update(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.save()
+        return response.Response({"success": True, "message": "Password Changed Successfully"}, status=status.HTTP_200_OK)
