@@ -155,7 +155,7 @@ class ResetPasswordTokenCheckAPI(generics.GenericAPIView):
 
 
 class ChangeUserPasswordAPI(generics.GenericAPIView):
-    """Change the password after confirming email"""
+    """Change the password after confirming email when user forgot the password"""
 
     serializer_class = serializers.ChangeUserPasswordAPISerializer
 

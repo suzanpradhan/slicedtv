@@ -39,7 +39,15 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
 class UserLoginSerializer(serializers.ModelSerializer):
     """Serializer for Login"""
     username = serializers.CharField()
+    tokens = serializers.SerializerMethodField()
 
+    def get_tokens(self, obj):
+        current_user = models.User.objects.get(username=obj['username'])
+        return {
+            'access': current_user.tokens()['access'],
+            'refresh': current_user.tokens()['refresh']
+        }
+    
     class Meta:
         model = models.User
         fields = ['username', 'password', 'email', 'tokens']
@@ -87,7 +95,7 @@ class RequestUserPasswordResetByEmailSerializer(serializers.Serializer):
 
 
 class ChangeUserPasswordAPISerializer(serializers.Serializer):
-    """ Patch Password """
+    """ Change Password when user forgot the password """
     password = serializers.CharField()
     token = serializers.CharField(min_length=1)
     uidb64 = serializers.CharField(min_length=1)
@@ -125,7 +133,7 @@ class ChangeUserPasswordAPISerializer(serializers.Serializer):
             return current_user
 
         except Exception as error:
-            raise AuthenticationFailed("Linkk Invalid", 401)
+            raise AuthenticationFailed("Link Invalid", 401)
         return super().validate(attrs)
 
 
