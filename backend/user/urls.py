@@ -1,5 +1,7 @@
 # External Import
 from django.urls import path
+from rest_framework_simplejwt.views import TokenRefreshView
+
 
 # Internal Import
 from . import views
@@ -16,4 +18,5 @@ urlpatterns = [
          name='complete-password-reset'),
     path('change-password/', views.ChangePasswordView.as_view(),
          name='change-password'),
+    path('token/refresh', TokenRefreshView.as_view(), name='refresh-token'),
 ]
