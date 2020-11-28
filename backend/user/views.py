@@ -73,11 +73,11 @@ class VerifyEmail(generics.GenericAPIView):
             return response.Response({'message': 'Email Successfully Activated'})
 
         except jwt.ExpiredSignatureError as identifier:
-            return response.Response({'error': 'Activation Link Expired'}, status=status.HTTP_400_BAD_REQUEST)
+            return response.Response({'errors': 'Activation Link Expired'}, status=status.HTTP_400_BAD_REQUEST)
             # ! Should send the user another activation link by asking the user.
 
         except jwt.exception.DecodeError as identifier:
-            return response.Response({'error': 'Invalid Activation Link'}, status=status.HTTP_400_BAD_REQUEST)
+            return response.Response({'errors': 'Invalid Activation Link'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class UserLoginAPIView(generics.GenericAPIView):
@@ -137,7 +137,7 @@ class ResetPasswordTokenCheckAPI(generics.GenericAPIView):
 
             if not PasswordResetTokenGenerator().check_token(user=current_user, token=token):
                 return response.Response(
-                    {'error': 'Token is not valid, request another'},
+                    {'errors': 'Token is not valid, request another'},
                     status=status.HTTP_400_BAD_REQUEST
                 )
             return response.Response({
@@ -149,7 +149,7 @@ class ResetPasswordTokenCheckAPI(generics.GenericAPIView):
 
         except DjangoUnicodeDecodeError as identifier:
             return response.Response(
-                {'error': 'Token is not valid, request another'},
+                {'errors': 'Token is not valid, request another'},
                 status=status.HTTP_400_BAD_REQUEST
             )
 

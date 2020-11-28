@@ -146,10 +146,10 @@ class ChangePasswordSerializer(serializers.Serializer):
     def validate(self, attrs):
         user = self.context['request'].user
         if not user.check_password(attrs.get('old_password')):
-            raise serializers.ValidationError({'error': 'Wrong password.'})
+            raise serializers.ValidationError({'errors': 'Wrong password.'})
         elif attrs.get('old_password') == attrs.get('new_password'):
             raise serializers.ValidationError(
-                {"error": "New password is same as Old"})
+                {"errors": "New password is same as Old"})
 
         return attrs
 
