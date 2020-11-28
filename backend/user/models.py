@@ -5,6 +5,7 @@ from django.contrib.auth.models import (
     PermissionsMixin,
 )
 
+from subscriptions.models import Subscription
 
 class UserManager(BaseUserManager):
     """Manager for user profile"""
@@ -47,6 +48,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     is_staff = models.BooleanField(default=False)
+    subscription_id = models.OneToOneField(Subscription)
 
     objects = UserManager()
     USERNAME_FIELD = 'username'
