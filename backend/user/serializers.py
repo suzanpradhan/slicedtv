@@ -159,3 +159,15 @@ class ChangePasswordSerializer(serializers.Serializer):
         user.set_password(password)
         user.save()
         return user
+
+
+# class GetUserSubscriptionTypeSerializer(serializers.ModelSerializer):
+#     """ Provide User Subscription Type """
+
+#     subscription_type = serializers.CharField(
+#         source='subscription.subscription_type', read_only=True)
+
+#     class Meta:
+#         model = models.User
+#         fields = ('subscription_type',)
+        

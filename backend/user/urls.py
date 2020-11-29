@@ -19,4 +19,6 @@ urlpatterns = [
     path('change-password/', views.ChangePasswordView.as_view(),
          name='change-password'),
     path('token/refresh', TokenRefreshView.as_view(), name='refresh-token'),
+    path('subscription-type/', views.GetUserSubscriptionTypeAPIView.as_view(),
+         name='subscription-type')
 ]
