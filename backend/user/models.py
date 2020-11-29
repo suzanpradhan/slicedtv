@@ -7,7 +7,8 @@ from django.contrib.auth.models import (
 )
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from subscriptions.models import Subscription
+# Internal Import
+from subscription.models import Subscription
 
 class UserManager(BaseUserManager):
     """Manager for user profile"""
@@ -50,7 +51,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     is_staff = models.BooleanField(default=False)
-    subscription_id = models.OneToOneField(Subscription)
+    subscription = models.ForeignKey(Subscription, on_delete=models.CASCADE)
 
     objects = UserManager()
     USERNAME_FIELD = 'username'
