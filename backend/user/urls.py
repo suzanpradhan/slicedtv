@@ -6,6 +6,7 @@ from rest_framework_simplejwt.views import TokenRefreshView
 # Internal Import
 from . import views
 
+
 urlpatterns = [
     path('register/', views.UserRegistrationView.as_view(), name='register'),
     path('verify-email/', views.VerifyEmail.as_view(), name='verify-email'),
@@ -19,4 +20,5 @@ urlpatterns = [
     path('change-password/', views.ChangePasswordView.as_view(),
          name='change-password'),
     path('token/refresh', TokenRefreshView.as_view(), name='refresh-token'),
+    
 ]
