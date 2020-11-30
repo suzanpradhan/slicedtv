@@ -51,8 +51,9 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
 
 class UserLoginSerializer(serializers.ModelSerializer):
     """Serializer for Login"""
-    username = serializers.CharField()
+    username = serializers.CharField(required=False, allow_blank=True)
     tokens = serializers.SerializerMethodField()
+    email = serializers.EmailField(required=False, allow_blank=True)
 
     def get_tokens(self, obj):
         current_user = models.User.objects.get(username=obj['username'])
@@ -63,7 +64,7 @@ class UserLoginSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.User
-        fields = ['username', 'password', 'email', 'tokens']
+        fields = ['email', 'tokens', 'username', 'password']
         extra_kwargs = {
             'tokens': {
                 'read_only': True,
@@ -72,24 +73,36 @@ class UserLoginSerializer(serializers.ModelSerializer):
                 'write_only': True,
                 'style': {'input_type': 'password'}
             },
-            'email': {
-                'read_only': True,
-            }
         }
 
     def validate(self, attrs):
         username = attrs.get('username', '')
         password = attrs.get('password', '')
-        current_user = auth.authenticate(username=username, password=password)
+        email = attrs.get('email', '')
+        if username=="" and email=="":
+            raise serializers.ValidationError({"errors":"Both username and email cannot be null"})
+        if username != "" and email != "":
+            current_user = auth.authenticate(
+                username=username, password=password)
+        elif username != "":
+            current_user = auth.authenticate(
+                username=username, password=password)
+        elif email != "":
+            try:
+                username = models.User.objects.get(email=email).username
+            except:
+                raise AuthenticationFailed({"errors": 'Invalid Credentials'})
+            current_user = auth.authenticate(
+                username=username, password=password)
 
         if not current_user:
-            raise AuthenticationFailed('Invalid Credentials')
+            raise AuthenticationFailed({"errors": 'Invalid Credentials'})
 
         if not current_user.is_active:
-            raise AuthenticationFailed('Account disabled')
+            raise AuthenticationFailed({"errors": 'Account disabled'})
 
         if not current_user.is_verified:
-            raise AuthenticationFailed('Account not verified')
+            raise AuthenticationFailed({"errors": 'Account not verified'})
 
         return {
             'username': current_user.username,
