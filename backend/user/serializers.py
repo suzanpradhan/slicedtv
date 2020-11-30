@@ -15,15 +15,28 @@ from .utils import Util
 class UserRegistrationSerializer(serializers.ModelSerializer):
     """ Serializer for User Registration """
 
+    password = serializers.CharField(
+        max_length=70, min_length=6, write_only=True)
+    username = serializers.CharField(max_length=20, min_length=4)
+
     class Meta:
         model = models.User
         fields = ('id', 'username', 'email', 'password')
-        extra_kwargs = {
-            'password': {
-                'write_only': True,
-                'style': {'input_type': 'password'}
-            }
-        }
+
+    def validate(self, attrs):
+        """Validating the data provided by the user"""
+
+        username = attrs.get('username', '')
+
+        if not username.isalnum():
+            raise serializers.ValidationError({
+                'username': 'The username should only contain alphanumeric characters'
+            })
+        elif username[0].isdigit():
+            raise serializers.ValidationError({
+                'username': 'The username should start with alphabetical Characters'
+            })
+        return attrs
 
     def create(self, validated_data):
         """Create and return a new user"""
@@ -170,4 +183,3 @@ class ChangePasswordSerializer(serializers.Serializer):
 #     class Meta:
 #         model = models.User
 #         fields = ('subscription_type',)
-        
