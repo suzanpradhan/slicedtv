@@ -1,10 +1,14 @@
+# External Import
 from djongo import models
 from django.contrib.auth.models import (
     AbstractBaseUser,
     BaseUserManager,
     PermissionsMixin,
 )
+from rest_framework_simplejwt.tokens import RefreshToken
 
+# Internal Import
+from subscription.models import Subscription
 
 class UserManager(BaseUserManager):
     """Manager for user profile"""
@@ -47,6 +51,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     is_staff = models.BooleanField(default=False)
+    subscription = models.ForeignKey(Subscription, on_delete=models.CASCADE)
 
     objects = UserManager()
     USERNAME_FIELD = 'username'
@@ -55,3 +60,11 @@ class User(AbstractBaseUser, PermissionsMixin):
     def __str__(self):
         """Return string representation of the user's username"""
         return self.username
+
+    def tokens(self):
+        """ Genreate Access and Refresh Token for current user """
+        user_token = RefreshToken.for_user(self)
+        return {
+            'refresh': str(user_token),
+            'access': str(user_token.access_token),
+        }

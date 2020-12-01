@@ -15,4 +15,7 @@ This version of djongo does not support "DROP CASCADE" fully. Visit https://www.
  OK
   Applying auth.0001_initial...This version of djongo does not support "schema validation using KEY" fully. Visit https://www.patreon.com/nesdis
 This version of djongo does not support "schema validation using REFERENCES" fully. Visit https://www.patreon.com/nesdis
- OK```
+ OK
+ ```
+
+4. Environment Variables `USER_EMAIL` for Email and `USER_PASS` for email's password should be created on your system or the server where you deploy. It is done for the privacy purpose. It is best to do the same for django secret key.
