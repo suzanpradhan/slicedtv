@@ -23,3 +23,4 @@ urlpatterns = [
     path('subscription-type/', views.GetUserSubscriptionTypeAPIView.as_view(),
          name='subscription-type'),
     path('token/refresh', TokenRefreshView.as_view(), name='refresh-token'),
+]
