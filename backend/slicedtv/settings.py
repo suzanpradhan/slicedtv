@@ -43,6 +43,11 @@ INSTALLED_APPS = [
     'user',
     'djongo',
     'subscription',
+    'episodes',
+    'movie',
+    'review',
+    'series',
+    
 ]
 
 MIDDLEWARE = [
