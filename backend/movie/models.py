@@ -1,15 +1,18 @@
+# External Import
 from djongo import models
-from slicedtv.models import Cast, Language, Genre, Gallery
+
+# Internal Import
+from slice.models import Cast, Language, Genre, Gallery
 
 class Movie(models.Model):
     movie_name=                models.CharField(max_length=255)
-    movie_poster=              models.URLField()
+    movie_poster=              models.URLField() #! Should use image field
     genre=                     models.ManyToManyField(Genre)    
     description=               models.CharField(max_length=255)
-    trailer_link=              models.URLField()
-    movie_link=                models.URLField()
+    trailer_link=              models.URLField() #! Should use File filed
+    movie_link=                models.URLField() #! Should use File field
     movie_length=              models.TimeField()
-    cast=                      models.ArrayField(model_container=Cast)
+    cast=                      models.ArrayField(model_container=Cast) #? Don't now if array field work for image.
     language=                  models.ManyToManyField(Language)
     aired=                     models.DateField()
     review_ID=                 models.IntegerField()

@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 
 from pathlib import Path
 import os
+import datetime
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -42,10 +43,12 @@ INSTALLED_APPS = [
     'user',
     'djongo',
     'subscription',
-    'episodes',
-    'movie',
-    'review',
-    'series',
+    # 'episodes',
+    # 'movie',
+    # 'review',
+    # 'series',
+    # 'slice',
+    # 'history',
     
 ]
 
@@ -134,11 +137,12 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-#User Model
+# User Model
 AUTH_USER_MODEL = 'user.User'
 
 # RestFramework settings
 REST_FRAMEWORK = {
+    'NON_FIELD_ERRORS_KEY': 'errors',
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     )
@@ -150,3 +154,10 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_HOST_USER = os.environ.get('EMAIL_USER')
 EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_PASS')
 EMAIL_PORT = 587
+
+# SIMPLE_JWT
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': datetime.timedelta(minutes=5),
+    'REFRESH_TOKEN_LIFETIME': datetime.timedelta(days=1),
+    'ROTATE_REFRESH_TOKENS': True,
+}

@@ -10,6 +10,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 # Internal Import
 from subscription.models import Subscription
 
+
 class UserManager(BaseUserManager):
     """Manager for user profile"""
 
@@ -51,7 +52,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     is_staff = models.BooleanField(default=False)
-    subscription = models.ForeignKey(Subscription, on_delete=models.CASCADE)
+    subscription = models.ForeignKey(
+        Subscription, on_delete=models.SET_NULL, null=True)
 
     objects = UserManager()
     USERNAME_FIELD = 'username'

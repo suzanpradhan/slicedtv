@@ -15,15 +15,28 @@ from .utils import Util
 class UserRegistrationSerializer(serializers.ModelSerializer):
     """ Serializer for User Registration """
 
+    password = serializers.CharField(
+        max_length=70, min_length=6, write_only=True)
+    username = serializers.CharField(max_length=20, min_length=4)
+
     class Meta:
         model = models.User
         fields = ('id', 'username', 'email', 'password')
-        extra_kwargs = {
-            'password': {
-                'write_only': True,
-                'style': {'input_type': 'password'}
-            }
-        }
+
+    def validate(self, attrs):
+        """Validating the data provided by the user"""
+
+        username = attrs.get('username', '')
+
+        if not username.isalnum():
+            raise serializers.ValidationError({
+                'username': 'The username should only contain alphanumeric characters'
+            })
+        elif username[0].isdigit():
+            raise serializers.ValidationError({
+                'username': 'The username should start with alphabetical Characters'
+            })
+        return attrs
 
     def create(self, validated_data):
         """Create and return a new user"""
@@ -38,8 +51,9 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
 
 class UserLoginSerializer(serializers.ModelSerializer):
     """Serializer for Login"""
-    username = serializers.CharField()
+    username = serializers.CharField(required=False, allow_blank=True)
     tokens = serializers.SerializerMethodField()
+    email = serializers.EmailField(required=False, allow_blank=True)
 
     def get_tokens(self, obj):
         current_user = models.User.objects.get(username=obj['username'])
@@ -50,7 +64,7 @@ class UserLoginSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.User
-        fields = ['username', 'password', 'email', 'tokens']
+        fields = ['email', 'tokens', 'username', 'password']
         extra_kwargs = {
             'tokens': {
                 'read_only': True,
@@ -59,24 +73,36 @@ class UserLoginSerializer(serializers.ModelSerializer):
                 'write_only': True,
                 'style': {'input_type': 'password'}
             },
-            'email': {
-                'read_only': True,
-            }
         }
 
     def validate(self, attrs):
         username = attrs.get('username', '')
         password = attrs.get('password', '')
-        current_user = auth.authenticate(username=username, password=password)
+        email = attrs.get('email', '')
+        if username=="" and email=="":
+            raise serializers.ValidationError({"errors":"Both username and email cannot be null"})
+        if username != "" and email != "":
+            current_user = auth.authenticate(
+                username=username, password=password)
+        elif username != "":
+            current_user = auth.authenticate(
+                username=username, password=password)
+        elif email != "":
+            try:
+                username = models.User.objects.get(email=email).username
+            except:
+                raise AuthenticationFailed({"errors": 'Invalid Credentials'})
+            current_user = auth.authenticate(
+                username=username, password=password)
 
         if not current_user:
-            raise AuthenticationFailed('Invalid Credentials')
+            raise AuthenticationFailed({"errors": 'Invalid Credentials'})
 
         if not current_user.is_active:
-            raise AuthenticationFailed('Account disabled')
+            raise AuthenticationFailed({"errors": 'Account disabled'})
 
         if not current_user.is_verified:
-            raise AuthenticationFailed('Account not verified')
+            raise AuthenticationFailed({"errors": 'Account not verified'})
 
         return {
             'username': current_user.username,
@@ -159,3 +185,14 @@ class ChangePasswordSerializer(serializers.Serializer):
         user.set_password(password)
         user.save()
         return user
+
+
+# class GetUserSubscriptionTypeSerializer(serializers.ModelSerializer):
+#     """ Provide User Subscription Type """
+
+#     subscription_type = serializers.CharField(
+#         source='subscription.subscription_type', read_only=True)
+
+#     class Meta:
+#         model = models.User
+#         fields = ('subscription_type',)

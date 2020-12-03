@@ -1,9 +1,11 @@
+# External Import
 from djongo import models
+
+# Internal Import
 from user.models import User
-from series.models import Series
 
 class Cast(models.Model):
-    cast =      models.CharField(max_length=200)
+    cast_name =      models.CharField(max_length=200)
     cast_img =  models.ImageField()
 
     class Meta:
@@ -13,10 +15,10 @@ class Cast(models.Model):
         return self.cast
 
 class Gallery(models.Model):
-    gallery_link = models.ImageField()
+    image = models.ImageField()
 
     def __str__(self):
-        return self.gallery_link
+        return self.image
 
 
 class Genre(models.Model):
@@ -30,13 +32,3 @@ class Language(models.Model):
 
     def __str__(self):
         return self.language
-
-
-
-class History(models.Model):
-    user =          models.ForeignKey(User)
-    series =        models.ForeignKey(Series)
-    movies=         models.ForeignKey(Series)
-
-    def __str__(self):
-        return self.user
