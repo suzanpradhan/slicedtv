@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 from pathlib import Path
 import os
 import datetime
+from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -22,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'r0q6enq@0=$svikbjf$2-+_wc9uff)p4ucwrmkax2-ytj3wh1_'
+SECRET_KEY = config('DJANGO_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -42,13 +43,17 @@ INSTALLED_APPS = [
     'rest_framework',
     'user',
     'djongo',
+    'decouple',
+    'storages',
+    'aws_test',
     'subscription',
-    # 'episodes',
-    # 'movie',
-    # 'review',
-    # 'series',
-    # 'slice',
-    # 'history',
+    #'episodes',
+    #'movie',
+    #'review',
+    #'series',
+    #'slice',
+    #'history',
+    
     
 ]
 
@@ -89,11 +94,11 @@ WSGI_APPLICATION = 'slicedtv.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'djongo',
-        'NAME': 'slicedtv_client',
+        'NAME': config('DATABASE_NAME'),
         'ENFORCE_SCHEMA': False,
-        'HOST': 'mongodb+srv://slicedtv_admin:dev4780@cluster0.zxwvu.mongodb.net/slicedtv_client?retryWrites=true&w=majority',
-        'USER': 'slicedtv_admin',
-        'PASSWORD': 'dev4780',
+        'HOST': config('HOST'),
+        'USER': config('DATABASE_USERNAME'),
+        'PASSWORD': config('DATABASE_PASSWORD'),
 
     }
 }
@@ -161,3 +166,23 @@ SIMPLE_JWT = {
     'REFRESH_TOKEN_LIFETIME': datetime.timedelta(days=1),
     'ROTATE_REFRESH_TOKENS': True,
 }
+
+
+# AWS Configuration
+AWS_ACCESS_KEY_ID = config('AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = config('AWS_SECRET_ACCESS_KEY')
+AWS_STORAGE_BUCKET_NAME = config('AWS_STORAGE_BUCKET_NAME')
+AWS_S3_REGION_NAME = config('AWS_S3_REGION_NAME')
+AWS_S3_ENDPOINT_URL = config('AWS_S3_ENDPOINT_URL')
+AWS_PUBLIC_MEDIA_LOCATION = 'media/public'
+DEFAULT_FILE_STORAGE = 'aws_test.backend.PublicMediaStorage'
+
+AWS_S3_CUSTOM_DOMAIN = '%s.s3.amazonaws.com' % AWS_STORAGE_BUCKET_NAME
+AWS_STATIC_LOCATION = 'ratatic'
+
+
+AWS_PUBLIC_MEDIA_LOCATION = 'media/public'
+DEFAULT_FILE_STORAGE = 'aws_test.backend.PublicMediaStorage'
+
+AWS_PRIVATE_MEDIA_LOCATION = 'media/private'
+PRIVATE_FILE_STORAGE = 'aws_test.backend.PrivateMediaStorage'
