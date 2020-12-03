@@ -176,3 +176,16 @@ class ChangePasswordView(generics.UpdateAPIView):
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
         return response.Response({"success": True, "message": "Password Changed Successfully"}, status=status.HTTP_200_OK)
+
+
+class GetUserSubscriptionTypeAPIView(generics.GenericAPIView):
+    """ Provide subscription type of the current user """
+
+    # serializer_class = serializers.GetUserSubscriptionTypeSerializer
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def get(self, request):
+        """ GET Method for subscription """
+        current_user = request.user
+        subscription_type = current_user.subscription.subscription_type
+        return response.Response({"subscription_type": subscription_type})
