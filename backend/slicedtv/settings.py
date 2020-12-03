@@ -22,7 +22,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'r0q6enq@0=$svikbjf$2-+_wc9uff)p4ucwrmkax2-ytj3wh1_'
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -86,14 +86,19 @@ WSGI_APPLICATION = 'slicedtv.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
+DATABASE_NAME = os.environ.get('DATABASE_NAME')
+DATABASE_USERNAME = os.environ.get('DATABASE_USERNAME')
+DATABASE_PASSWORD = os.environ.get('DATABASE_PASSWORD')
+HOST_VALUE = f"mongodb+srv://{DATABASE_USERNAME}:{DATABASE_PASSWORD}@cluster0.zxwvu.mongodb.net/{DATABASE_NAME}?retryWrites=true&w=majority"
+
 DATABASES = {
     'default': {
         'ENGINE': 'djongo',
-        'NAME': 'slicedtv_client',
+        'NAME': DATABASE_NAME,
         'ENFORCE_SCHEMA': False,
-        'HOST': 'mongodb+srv://slicedtv_admin:dev4780@cluster0.zxwvu.mongodb.net/slicedtv_client?retryWrites=true&w=majority',
-        'USER': 'slicedtv_admin',
-        'PASSWORD': 'dev4780',
+        'HOST': HOST_VALUE,
+        'USER': DATABASE_USERNAME,
+        'PASSWORD': DATABASE_PASSWORD,
 
     }
 }
@@ -161,3 +166,11 @@ SIMPLE_JWT = {
     'REFRESH_TOKEN_LIFETIME': datetime.timedelta(days=1),
     'ROTATE_REFRESH_TOKENS': True,
 }
+
+# AWS Configuration
+AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
+AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_STORAGE_BUCKET_NAME')
+AWS_S3_REGION_NAME = 'Asia Pacific (Mumbai) ap-south-1'
+AWS_S3_ENDPOINT_URL = 'https://s3.amazonaws.com'
+
