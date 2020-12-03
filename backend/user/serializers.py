@@ -79,8 +79,9 @@ class UserLoginSerializer(serializers.ModelSerializer):
         username = attrs.get('username', '')
         password = attrs.get('password', '')
         email = attrs.get('email', '')
-        if username=="" and email=="":
-            raise serializers.ValidationError({"errors":"Both username and email cannot be null"})
+        if username == "" and email == "":
+            raise serializers.ValidationError(
+                {"errors": "Both username and email cannot be null"})
         if username != "" and email != "":
             current_user = auth.authenticate(
                 username=username, password=password)
@@ -196,3 +197,9 @@ class ChangePasswordSerializer(serializers.Serializer):
 #     class Meta:
 #         model = models.User
 #         fields = ('subscription_type',)
+
+
+class CheckUsernameExistSerializer(serializers.Serializer):
+    """ Check whether the username is valid or not before registration """
+
+    username = serializers.CharField()

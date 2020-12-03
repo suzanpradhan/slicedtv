@@ -189,3 +189,20 @@ class GetUserSubscriptionTypeAPIView(generics.GenericAPIView):
         current_user = request.user
         subscription_type = current_user.subscription.subscription_type
         return response.Response({"subscription_type": subscription_type})
+
+
+class CheckUsernameExistAPIView(generics.GenericAPIView):
+    """ Check username already exist or not """
+
+    serializer_class = serializers.CheckUsernameExistSerializer
+
+    def post(self, request):
+        """ POST Request """
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        username = request.data['username']
+        current_user = models.User.objects.filter(username=username).exists()
+        if current_user:
+            return response.Response({'exist': True})
+        else:
+            return response.Response({'exist': False})

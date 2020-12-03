@@ -8,6 +8,8 @@ from . import views
 
 
 urlpatterns = [
+    path('check-username/', views.CheckUsernameExistAPIView.as_view(),
+         name='check-username'),
     path('register/', views.UserRegistrationView.as_view(), name='register'),
     path('verify-email/', views.VerifyEmail.as_view(), name='verify-email'),
     path('login/', views.UserLoginAPIView.as_view(), name='login'),
