@@ -1,18 +1,21 @@
+# External Import
 from djongo import models
-from slicedtv.models import Cast, Language, Genre, Gallery
+
+# Internal Import
+from slice.models import Cast, Language, Genre, Gallery
 
 class Series(models.Model):
     series_name=                models.CharField(max_length=255)
-    series_poster=              models.URLField()
+    series_poster=              models.URLField() #! Should be image field
     genre=                      models.ManyToManyField(Genre)       
     description=                models.CharField(max_length=255)
-    trailer_link=               models.URLField()
+    trailer_link=               models.URLField() #! Should be file field
     cast=                       models.ArrayField(model_container=Cast,) 
-    language=                   models.ManyToManyField(Language)
+    language=                   models.ManyToManyField(Language,)
     aired=                      models.DateField()
     rating_info=                models.IntegerField()
     production_Company=         models.CharField(max_length=255)
-    gallery=                    models.ArrayField(model_container=Gallery,)
+    gallery=                    models.ManyToManyField(Gallery,)
     
 
     objects = models.DjongoManager()

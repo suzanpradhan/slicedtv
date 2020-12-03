@@ -43,10 +43,12 @@ INSTALLED_APPS = [
     'user',
     'djongo',
     'subscription',
-    'episodes',
-    'movie',
-    'review',
-    'series',
+    # 'episodes',
+    # 'movie',
+    # 'review',
+    # 'series',
+    # 'slice',
+    # 'history',
     
 ]
 

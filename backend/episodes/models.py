@@ -8,9 +8,9 @@ class Episode(models.Model):
     episode_name=               models.CharField(max_length=255)
     episode_length=             models.TimeField()
     episode_date=               models.DateField()
-    episode_link=               models.URLField()
+    episode_link=               models.URLField() #! Should use file field
     episode_rating=             models.IntegerField()
-    review_ID=                  models.ForeignKey(Review, on_delete=models.CASCADE)
+    review=                     models.ForeignKey(Review, on_delete=models.CASCADE)
     
     def __str__(self):
         return self.episode_name
