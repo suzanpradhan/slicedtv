@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 from pathlib import Path
 import os
 import datetime
+from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -22,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
+SECRET_KEY = config('DJANGO_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -42,13 +43,17 @@ INSTALLED_APPS = [
     'rest_framework',
     'user',
     'djongo',
+    'decouple',
+    'storages',
+    'aws_test',
     'subscription',
-    # 'episodes',
-    # 'movie',
-    # 'review',
-    # 'series',
-    # 'slice',
-    # 'history',
+    #'episodes',
+    #'movie',
+    #'review',
+    #'series',
+    #'slice',
+    #'history',
+    
     
 ]
 
@@ -86,20 +91,15 @@ WSGI_APPLICATION = 'slicedtv.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
-DATABASE_NAME = os.environ.get('DATABASE_NAME')
-DATABASE_USERNAME = os.environ.get('DATABASE_USERNAME')
-DATABASE_PASSWORD = os.environ.get('DATABASE_PASSWORD')
-HOST_VALUE = f"mongodb+srv://{DATABASE_USERNAME}:{DATABASE_PASSWORD}@cluster0.zxwvu.mongodb.net/{DATABASE_NAME}?retryWrites=true&w=majority"
 
 DATABASES = {
     'default': {
         'ENGINE': 'djongo',
-        'NAME': DATABASE_NAME,
+        'NAME': config('DATABASE_NAME'),
         'ENFORCE_SCHEMA': False,
-        'HOST': HOST_VALUE,
-        'USER': DATABASE_USERNAME,
-        'PASSWORD': DATABASE_PASSWORD,
-
+        'HOST': config('HOST'),
+        'USER': config('DATABASE_USERNAME'),
+        'PASSWORD': config('DATABASE_PASSWORD'),
     }
 }
 
@@ -167,10 +167,22 @@ SIMPLE_JWT = {
     'ROTATE_REFRESH_TOKENS': True,
 }
 
-# AWS Configuration
-AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
-AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
-AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_STORAGE_BUCKET_NAME')
-AWS_S3_REGION_NAME = 'Asia Pacific (Mumbai) ap-south-1'
-AWS_S3_ENDPOINT_URL = 'https://s3.amazonaws.com'
 
+# AWS Configuration
+AWS_ACCESS_KEY_ID = config('AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = config('AWS_SECRET_ACCESS_KEY')
+AWS_STORAGE_BUCKET_NAME = config('AWS_STORAGE_BUCKET_NAME')
+AWS_S3_REGION_NAME = config('AWS_S3_REGION_NAME')
+AWS_S3_ENDPOINT_URL = config('AWS_S3_ENDPOINT_URL')
+AWS_PUBLIC_MEDIA_LOCATION = 'media/public'
+DEFAULT_FILE_STORAGE = 'slicedtv.backend.PublicMediaStorage'
+
+AWS_S3_CUSTOM_DOMAIN = '%s.s3.amazonaws.com' % AWS_STORAGE_BUCKET_NAME
+AWS_STATIC_LOCATION = 'ratatic'
+
+
+AWS_PUBLIC_MEDIA_LOCATION = 'media/public'
+DEFAULT_FILE_STORAGE = 'slicedtv.backend.PublicMediaStorage'
+
+AWS_PRIVATE_MEDIA_LOCATION = 'media/private'
+PRIVATE_FILE_STORAGE = 'slicedtv.backend.PrivateMediaStorage'

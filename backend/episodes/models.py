@@ -13,4 +13,4 @@ class Episode(models.Model):
     review=                     models.ForeignKey(Review, on_delete=models.CASCADE)
     
     def __str__(self):
-        return self.episode_name
+        return self.series.series_name+" "+self.episode_id
