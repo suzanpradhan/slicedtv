@@ -28,6 +28,9 @@ dependencies:
   hydrated_bloc: ^6.1.0
   adhara_socket_io: ^0.4.2+1
   hive: ^1.4.4+1
+  equatable: ^1.2.5
+  email_validator: ^1.0.5
+  http:
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -68,16 +71,16 @@ flutter:
   fonts:
     - family: SF-PRO-DISPLAY
       fonts:
-         - asset: fonts/sf_pro_display/SF-PRO-DISPLAY-REGULAR.TTF
+         - asset: assets/fonts/sf_pro_display/SF-PRO-DISPLAY-REGULAR.TTF
     - family: SF-PRO-DISPLAY-BOLD
       fonts:
-         - asset: fonts/sf_pro_display/SF-PRO-DISPLAY-BOLD.TTF
+         - asset: assets/fonts/sf_pro_display/SF-PRO-DISPLAY-BOLD.TTF
     - family: SF-PRO-TEXT
       fonts:
-         - asset: fonts/sf_pro_text/SF-PRO-TEXT-REGULAR.TTF
+         - asset: assets/fonts/sf_pro_text/SF-PRO-TEXT-REGULAR.TTF
     - family: SF-PRO-TEXT-BOLD
       fonts:
-         - asset: fonts/sf_pro_text/SF-PRO-TEXT-BOLD.TTF
+         - asset: assets/fonts/sf_pro_text/SF-PRO-TEXT-BOLD.TTF
 
   #     fonts:
   #       - asset: fonts/TrajanPro.ttf

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:slicedtv/blocs/login_signup/loginsignup_bloc.dart';
 import 'package:slicedtv/utils/conts/colors.dart';
 import 'package:slicedtv/utils/screen_config.dart';
 
@@ -67,7 +68,7 @@ class _GetStartedWidgetState extends State<GetStartedWidget> {
                     borderRadius: BorderRadius.circular(4)),
                 color: ColorPalette.purpleMedium,
                 onPressed: () {
-                  widget.showLoginSignUp();
+                  widget.showLoginSignUp(NavigateToSignUpForm());
                 },
                 child: Padding(
                   padding:

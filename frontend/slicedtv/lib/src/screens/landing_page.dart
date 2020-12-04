@@ -1,25 +1,40 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:slicedtv/blocs/login_signup/loginsignup_bloc.dart';
 import 'package:slicedtv/src/widgets/landing_page/get_started_widget.dart';
 import 'package:slicedtv/src/widgets/landing_page/login_signup_widget.dart';
 import 'package:slicedtv/src/widgets/landing_page/slicedtv_def.dart';
 import 'package:slicedtv/utils/conts/colors.dart';
 import 'package:slicedtv/utils/screen_config.dart';
 
-class LandingPage extends StatefulWidget {
+class LandingPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (context) => LoginsignupBloc(),
+      child: LandingPageStateful(),
+    );
+  }
+}
+
+class LandingPageStateful extends StatefulWidget {
   @override
   _LandingPageState createState() => _LandingPageState();
 }
 
-class _LandingPageState extends State<LandingPage> {
-  showLoginSignUpDialog() {
+class _LandingPageState extends State<LandingPageStateful> {
+  showLoginSignUpDialog(LoginsignupEvent addEvent) {
     return showDialog(
       context: context,
-      builder: (context) {
+      builder: (_) {
         return AlertDialog(
-          backgroundColor: ColorPalette.blackLightDark,
-          content: LoginSigUpWidget(),
-        );
+            scrollable: true,
+            backgroundColor: ColorPalette.blackDark,
+            content: BlocProvider.value(
+              value: BlocProvider.of<LoginsignupBloc>(context)..add(addEvent),
+              child: LoginSigUpWidget(),
+            ));
       },
     );
   }
@@ -73,7 +88,9 @@ class _LandingPageState extends State<LandingPage> {
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(4)),
               color: ColorPalette.greyMedium,
-              onPressed: () {},
+              onPressed: () {
+                showLoginSignUpDialog(NavigateToLoginForm());
+              },
               child: Text(
                 "Login",
                 style: TextStyle(
@@ -89,7 +106,9 @@ class _LandingPageState extends State<LandingPage> {
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(4)),
               color: ColorPalette.purpleMedium,
-              onPressed: () {},
+              onPressed: () {
+                showLoginSignUpDialog(NavigateToSignUpForm());
+              },
               child: Text(
                 "Sign Up",
                 style: TextStyle(
@@ -121,10 +140,16 @@ class _LandingPageState extends State<LandingPage> {
             SingleChildScrollView(
               child: Column(
                 children: [
-                  GetStartedWidget(
-                    showLoginSignUp: showLoginSignUpDialog,
-                  ),
-                  SlicedTVDef()
+                  BlocProvider.value(
+                      value: BlocProvider.of<LoginsignupBloc>(context),
+                      child: GetStartedWidget(
+                        showLoginSignUp: showLoginSignUpDialog,
+                      )),
+                  BlocProvider.value(
+                      value: BlocProvider.of<LoginsignupBloc>(context),
+                      child: SlicedTVDef(
+                        onGetStartedClicked: showLoginSignUpDialog,
+                      )),
                 ],
               ),
             ),

@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:slicedtv/blocs/login_signup/loginsignup_bloc.dart';
 import 'package:slicedtv/utils/conts/colors.dart';
 import 'package:slicedtv/utils/screen_config.dart';
 
 class SlicedTVDef extends StatefulWidget {
+  final Function onGetStartedClicked;
+  SlicedTVDef({this.onGetStartedClicked});
   @override
   _SlicedTVDefState createState() => _SlicedTVDefState();
 }
@@ -47,7 +51,9 @@ class _SlicedTVDefState extends State<SlicedTVDef> {
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
             color: ColorPalette.purpleMedium,
-            onPressed: () {},
+            onPressed: () {
+              widget.onGetStartedClicked(NavigateToSignUpForm());
+            },
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               child: Text(
