@@ -6,11 +6,10 @@ class Episode(models.Model):
     series=                     models.ForeignKey(Series, on_delete=models.CASCADE)
     episode_id=                 models.IntegerField()
     episode_name=               models.CharField(max_length=255)
+    episode_description=        models.TextField()
     episode_length=             models.TimeField()
     episode_date=               models.DateField()
-    episode_link=               models.URLField() #! Should use file field
-    episode_rating=             models.IntegerField()
-    review=                     models.ForeignKey(Review, on_delete=models.CASCADE)
+    episode_link=               models.URLField() 
     
     def __str__(self):
         return self.series.series_name+" "+self.episode_id
