@@ -45,7 +45,6 @@ INSTALLED_APPS = [
     'djongo',
     'decouple',
     'storages',
-    'aws_test',
     'subscription',
     #'episodes',
     #'movie',
