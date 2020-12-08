@@ -79,8 +79,9 @@ class UserLoginSerializer(serializers.ModelSerializer):
         username = attrs.get('username', '')
         password = attrs.get('password', '')
         email = attrs.get('email', '')
-        if username=="" and email=="":
-            raise serializers.ValidationError({"errors":"Both username and email cannot be null"})
+        if username == "" and email == "":
+            raise serializers.ValidationError(
+                {"errors": "Both username and email cannot be null"})
         if username != "" and email != "":
             current_user = auth.authenticate(
                 username=username, password=password)
@@ -91,18 +92,18 @@ class UserLoginSerializer(serializers.ModelSerializer):
             try:
                 username = models.User.objects.get(email=email).username
             except:
-                raise AuthenticationFailed({"errors": 'Invalid Credentials'})
+                raise serializers.ValidationError('Invalid Credentials')
             current_user = auth.authenticate(
                 username=username, password=password)
 
         if not current_user:
-            raise AuthenticationFailed({"errors": 'Invalid Credentials'})
+            raise serializers.ValidationError('Invalid Credentials')
 
         if not current_user.is_active:
-            raise AuthenticationFailed({"errors": 'Account disabled'})
+            raise serializers.ValidationError('Account Disabled')
 
         if not current_user.is_verified:
-            raise AuthenticationFailed({"errors": 'Account not verified'})
+            raise serializers.ValidationError('Account Not Verified')
 
         return {
             'username': current_user.username,
@@ -122,25 +123,14 @@ class RequestUserPasswordResetByEmailSerializer(serializers.Serializer):
 
 class ChangeUserPasswordAPISerializer(serializers.Serializer):
     """ Change Password when user forgot the password """
-    password = serializers.CharField()
-    token = serializers.CharField(min_length=1)
-    uidb64 = serializers.CharField(min_length=1)
+    password = serializers.CharField(
+        max_length=70, min_length=6, write_only=True)
+    token = serializers.CharField(min_length=1, write_only=True)
+    uidb64 = serializers.CharField(min_length=1, write_only=True)
 
     class Meta:
         model = models.User
         fields = ('password', 'token', 'uidb64')
-        extra_kwargs = {
-            'password': {
-                'write_only': True,
-                'style': {'input_type': 'password'}
-            },
-            'token': {
-                'write_only': True,
-            },
-            'uidb64': {
-                'write_only': True,
-            },
-        }
 
     def validate(self, attrs):
         """Validating the request"""
@@ -153,13 +143,13 @@ class ChangeUserPasswordAPISerializer(serializers.Serializer):
             current_user = models.User.objects.get(id=id)
 
             if not PasswordResetTokenGenerator().check_token(user=current_user, token=token):
-                raise AuthenticationFailed("Link Invalid", 401)
+                raise serializers.ValidationError('Link Invalid')
             current_user.set_password(password)
             current_user.save()
             return current_user
 
         except Exception as error:
-            raise AuthenticationFailed("Link Invalid", 401)
+            raise serializers.ValidationError('Link Invalid')
         return super().validate(attrs)
 
 
@@ -167,15 +157,15 @@ class ChangePasswordSerializer(serializers.Serializer):
     """ Change password when user is logged In  """
 
     old_password = serializers.CharField(write_only=True, required=True)
-    new_password = serializers.CharField(write_only=True, required=False)
+    new_password = serializers.CharField(
+        max_length=70, min_length=6, write_only=True)
 
     def validate(self, attrs):
         user = self.context['request'].user
         if not user.check_password(attrs.get('old_password')):
-            raise serializers.ValidationError({'errors': 'Wrong password.'})
+            raise serializers.ValidationError('Wrong password')
         elif attrs.get('old_password') == attrs.get('new_password'):
-            raise serializers.ValidationError(
-                {"errors": "New password is same as Old"})
+            raise serializers.ValidationError('New password is same as Old')
 
         return attrs
 
@@ -196,3 +186,9 @@ class ChangePasswordSerializer(serializers.Serializer):
 #     class Meta:
 #         model = models.User
 #         fields = ('subscription_type',)
+
+
+class CheckUsernameExistSerializer(serializers.Serializer):
+    """ Check whether the username is valid or not before registration """
+
+    username = serializers.CharField()
