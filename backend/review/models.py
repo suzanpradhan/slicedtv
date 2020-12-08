@@ -11,8 +11,10 @@ class Review(models.Model):
     review_title = models.CharField(max_length=255)
     description = models.TextField()
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    movie = models.ForeignKey(Movie, on_delete=models.CASCADE, null=True)
-    series = models.ForeignKey(Series, on_delete=models.CASCADE, null=True)
+    movie = models.ForeignKey(
+        Movie, on_delete=models.CASCADE, null=True, blank=True)
+    series = models.ForeignKey(
+        Series, on_delete=models.CASCADE, null=True, blank=True)
     date = models.DateTimeField(auto_now_add=True)
     rating = models.FloatField()
 

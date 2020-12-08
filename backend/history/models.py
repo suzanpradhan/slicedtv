@@ -9,8 +9,10 @@ from user.models import User
 
 class History(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    series = models.ForeignKey(Series, on_delete=models.CASCADE, null=True)
-    movies = models.ForeignKey(Movie, on_delete=models.CASCADE, null=True)
+    series = models.ForeignKey(
+        Series, on_delete=models.CASCADE, null=True, blank=True)
+    movies = models.ForeignKey(
+        Movie, on_delete=models.CASCADE, null=True, blank=True)
 
     def __str__(self):
         return self.user
