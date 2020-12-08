@@ -43,8 +43,6 @@ INSTALLED_APPS = [
     'rest_framework',
     'user',
     'djongo',
-    'decouple',
-    'storages',
     'subscription',
     #'episodes',
     #'movie',
@@ -166,22 +164,3 @@ SIMPLE_JWT = {
     'ROTATE_REFRESH_TOKENS': True,
 }
 
-
-# AWS Configuration
-AWS_ACCESS_KEY_ID = config('AWS_ACCESS_KEY_ID')
-AWS_SECRET_ACCESS_KEY = config('AWS_SECRET_ACCESS_KEY')
-AWS_STORAGE_BUCKET_NAME = config('AWS_STORAGE_BUCKET_NAME')
-AWS_S3_REGION_NAME = config('AWS_S3_REGION_NAME')
-AWS_S3_ENDPOINT_URL = config('AWS_S3_ENDPOINT_URL')
-AWS_PUBLIC_MEDIA_LOCATION = 'media/public'
-DEFAULT_FILE_STORAGE = 'slicedtv.backend.PublicMediaStorage'
-
-AWS_S3_CUSTOM_DOMAIN = '%s.s3.amazonaws.com' % AWS_STORAGE_BUCKET_NAME
-AWS_STATIC_LOCATION = 'ratatic'
-
-
-AWS_PUBLIC_MEDIA_LOCATION = 'media/public'
-DEFAULT_FILE_STORAGE = 'slicedtv.backend.PublicMediaStorage'
-
-AWS_PRIVATE_MEDIA_LOCATION = 'media/private'
-PRIVATE_FILE_STORAGE = 'slicedtv.backend.PrivateMediaStorage'
