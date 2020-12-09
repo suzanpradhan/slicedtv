@@ -268,12 +268,19 @@ class GetUserSubscriptionTypeAPIView(generics.GenericAPIView):
     def get(self, request):
         """ GET Method for subscription """
         current_user = request.user
-        subscription_type = current_user.subscription.subscription_type
-        return response.Response({
-            'status': status.HTTP_200_OK,
-            'message': subscription_type,
-            'response': {'subscription_type': subscription_type},
-        }, status=status.HTTP_200_OK)
+        if request.user.subscription:
+            subscription_type = current_user.subscription.subscription_type
+            return response.Response({
+                'status': status.HTTP_200_OK,
+                'message': subscription_type,
+                'response': {'subscription_type': subscription_type},
+            }, status=status.HTTP_200_OK)
+        else:
+           return response.Response({
+                'status': status.HTTP_204_NO_CONTENT,
+                'message': 'No Subscription',
+                'response': {'subscription_type': 'Not Subscribed Yet'},
+            }, status=status.HTTP_200_OK)
 
 
 class CheckUsernameExistAPIView(generics.GenericAPIView):
