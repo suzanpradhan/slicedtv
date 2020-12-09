@@ -13,7 +13,7 @@ class Subscription(models.Model):
 
     def __str__(self):
         """Return string representation of the subscription type"""
-        return self.Subscription_name
+        return self.subscription_name
 
     @property
     def get_subscription_detail(self):

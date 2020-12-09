@@ -270,16 +270,23 @@ class GetUserSubscriptionTypeAPIView(generics.GenericAPIView):
         current_user = request.user
         if request.user.subscription:
             subscription_type = current_user.subscription.subscription_type
+            subscription_name = current_user.subscription.subscription_name
             return response.Response({
                 'status': status.HTTP_200_OK,
                 'message': subscription_type,
-                'response': {'subscription_type': subscription_type},
+                'response': {
+                    'subscription_type': subscription_type,
+                    'subscription_name': subscription_name
+                },
             }, status=status.HTTP_200_OK)
         else:
-           return response.Response({
+            return response.Response({
                 'status': status.HTTP_204_NO_CONTENT,
                 'message': 'No Subscription',
-                'response': {'subscription_type': 'Not Subscribed Yet'},
+                'response': {
+                    'subscription_type': 'Not Subscribed Yet',
+                    'subscription_name': 'No Subscription'
+                },
             }, status=status.HTTP_200_OK)
 
 
