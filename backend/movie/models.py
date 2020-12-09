@@ -7,17 +7,17 @@ from slice.models import Cast, Language, Genre, Gallery
 class Movie(models.Model):
     movie_name=                models.CharField(max_length=255)
     movie_poster=              models.URLField() 
-    genre=                     models.ManyToManyField(Genre)    
+    genres=                    models.ManyToManyField(Genre)    
     description=               models.TextField()
     trailer_link=              models.URLField() 
     movie_link=                models.URLField() 
     movie_length=              models.TimeField()
-    cast=                      models.ManyToManyField(Cast)
-    language=                  models.ManyToManyField(Language)
+    casts=                     models.ManyToManyField(Cast)
+    languages=                 models.ManyToManyField(Language)
     aired=                     models.DateField()
     avg_rating=                models.FloatField() 
-    production_Company=        models.CharField(max_length=255)
-    gallery=                   models.ManyToManyField(Gallery)
+    production_company=        models.CharField(max_length=255)
+    gallerys=                  models.ManyToManyField(Gallery)
 
 
     objects = models.DjongoManager()
