@@ -143,6 +143,7 @@ AUTH_USER_MODEL = 'user.User'
 # RestFramework settings
 REST_FRAMEWORK = {
     'NON_FIELD_ERRORS_KEY': 'errors',
+    'EXCEPTION_HANDLER': 'slicedtv.utils.custom_exception_handler',
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     )
