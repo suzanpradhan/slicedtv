@@ -4,7 +4,7 @@ from djongo import models
 
 class Subscription(models.Model):
 
-    Subscription_name = models.CharField(max_length=200)
+    subscription_name = models.CharField(max_length=200)
     subscription_type = models.CharField(max_length=200)
     subscription_amount = models.FloatField()
     subscription_detail = models.TextField()
