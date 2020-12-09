@@ -6,14 +6,14 @@ from slice.models import Cast, Language, Genre, Gallery
 
 class Series(models.Model):
     series_name=                models.CharField(max_length=255)
-    series_poster=              models.URLField() #! Should be image field
+    series_poster=              models.URLField() 
     genre=                      models.ManyToManyField(Genre)       
     description=                models.CharField(max_length=255)
-    trailer_link=               models.URLField() #! Should be file field
-    cast=                       models.ArrayField(model_container=Cast,) 
+    trailer_link=               models.URLField() 
+    cast=                       models.ManyToManyField(Cast) 
     language=                   models.ManyToManyField(Language,)
     aired=                      models.DateField()
-    rating_info=                models.IntegerField()
+    avg_rating=                 models.FloatField()
     production_Company=         models.CharField(max_length=255)
     gallery=                    models.ManyToManyField(Gallery,)
     
