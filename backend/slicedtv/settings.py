@@ -27,7 +27,7 @@ SECRET_KEY = 'r0q6enq@0=$svikbjf$2-+_wc9uff)p4ucwrmkax2-ytj3wh1_'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["slicedtv.herokuapp.com"]
 
 
 # Application definition

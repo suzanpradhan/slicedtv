@@ -1,5 +1,7 @@
-djongo==1.3.3
+git+git://github.com/suzanpradhan/mongo-python-driver@master
+git+git://github.com/suzanpradhan/djongo@master
 dnspython==2.0.0
 djangorestframework==3.12.2
-djangorestframework-simplejwt==4.6.0
+djangorestframework-simplejwt==4.4.0
 Pillow
+gunicorn
