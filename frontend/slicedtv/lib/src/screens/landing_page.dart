@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:slicedtv/apis/provider/auth_provider.dart';
+import 'package:slicedtv/blocs/auth/auth_bloc.dart';
 import 'package:slicedtv/blocs/login_signup/loginsignup_bloc.dart';
 import 'package:slicedtv/src/widgets/landing_page/get_started_widget.dart';
 import 'package:slicedtv/src/widgets/landing_page/login_signup_widget.dart';
@@ -24,19 +26,36 @@ class LandingPageStateful extends StatefulWidget {
 }
 
 class _LandingPageState extends State<LandingPageStateful> {
+  AuthProvider _authProvider;
+
   showLoginSignUpDialog(LoginsignupEvent addEvent) {
     return showDialog(
       context: context,
       builder: (_) {
         return AlertDialog(
-            scrollable: true,
-            backgroundColor: ColorPalette.blackDark,
-            content: BlocProvider.value(
-              value: BlocProvider.of<LoginsignupBloc>(context)..add(addEvent),
-              child: LoginSigUpWidget(),
-            ));
+          scrollable: true,
+          backgroundColor: ColorPalette.blackDark,
+          content: MultiBlocProvider(providers: [
+            BlocProvider.value(
+                value: BlocProvider.of<LoginsignupBloc>(context)
+                  ..add(addEvent)),
+            BlocProvider(
+                create: (context) => AuthBloc(authProvider: _authProvider))
+          ], child: LoginSigUpWidget()),
+          // content: BlocProvider.value(
+          //   value: BlocProvider.of<LoginsignupBloc>(context)..add(addEvent),
+          //   child: LoginSigUpWidget(),
+          // )
+        );
       },
     );
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _authProvider = AuthProvider();
   }
 
   @override
@@ -49,39 +68,45 @@ class _LandingPageState extends State<LandingPageStateful> {
         elevation: 0,
         title: Text("sliced.tv"),
         actions: [
-          FlatButton(
-            onPressed: () {},
-            child: Text(
-              "About",
-              style: TextStyle(
-                  color: Colors.white,
-                  fontFamily: "SF-PRO-DISPLAY",
-                  fontSize: 16),
-            ),
-          ),
-          SizedBox(width: 14),
-          FlatButton(
-            onPressed: () {},
-            child: Text(
-              "Help",
-              style: TextStyle(
-                  color: Colors.white,
-                  fontFamily: "SF-PRO-DISPLAY",
-                  fontSize: 16),
-            ),
-          ),
-          SizedBox(width: 14),
-          FlatButton(
-            onPressed: () {},
-            child: Text(
-              "Premium",
-              style: TextStyle(
-                  color: Colors.white,
-                  fontFamily: "SF-PRO-DISPLAY",
-                  fontSize: 16),
-            ),
-          ),
-          SizedBox(width: 14),
+          !ScreenConfig().isMobile()
+              ? Row(
+                  children: [
+                    FlatButton(
+                      onPressed: () {},
+                      child: Text(
+                        "About",
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontFamily: "SF-PRO-DISPLAY",
+                            fontSize: 16),
+                      ),
+                    ),
+                    SizedBox(width: 14),
+                    FlatButton(
+                      onPressed: () {},
+                      child: Text(
+                        "Help",
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontFamily: "SF-PRO-DISPLAY",
+                            fontSize: 16),
+                      ),
+                    ),
+                    SizedBox(width: 14),
+                    FlatButton(
+                      onPressed: () {},
+                      child: Text(
+                        "Premium",
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontFamily: "SF-PRO-DISPLAY",
+                            fontSize: 16),
+                      ),
+                    ),
+                    SizedBox(width: 14),
+                  ],
+                )
+              : Container(),
           Padding(
             padding: const EdgeInsets.fromLTRB(8, 12, 8, 12),
             child: RaisedButton(

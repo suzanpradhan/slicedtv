@@ -23,7 +23,22 @@ class EmailValidate extends AuthEvent {
   List<Object> get props => [email];
 }
 
-class PasswordValidate extends AuthEvent {}
+class PasswordValidate extends AuthEvent {
+  final String password;
+  const PasswordValidate({this.password});
+
+  @override
+  List<Object> get props => [password];
+}
+
+class ConfirmPasswordValidate extends AuthEvent {
+  final String password;
+  final String confirmPassword;
+  const ConfirmPasswordValidate({this.password, this.confirmPassword});
+
+  @override
+  List<Object> get props => [password, confirmPassword];
+}
 
 class LoginClicekdEvent extends AuthEvent {
   final String usernameEmail;

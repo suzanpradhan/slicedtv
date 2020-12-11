@@ -11,7 +11,7 @@ class SignUpForm extends StatefulWidget {
 }
 
 class _SignUpFormState extends State<SignUpForm> {
-  TextEditingController usernameEmailController = TextEditingController();
+  TextEditingController usernameController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   TextEditingController confirmPasswordController = TextEditingController();
   TextEditingController emailController = TextEditingController();
@@ -22,7 +22,29 @@ class _SignUpFormState extends State<SignUpForm> {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(height: 20),
+          SizedBox(height: 10),
+          BlocBuilder<AuthBloc, AuthState>(
+            builder: (context, state) {
+              if (state is SignUpError) {
+                return Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 8, 0, 0),
+                  child: Container(
+                    width: 320,
+                    child: Text(
+                      state.errorMessage,
+                      style: TextStyle(
+                          color: Colors.redAccent,
+                          fontFamily: "SF-PRO-TEXT",
+                          fontSize: 12),
+                    ),
+                  ),
+                );
+              } else {
+                return Container();
+              }
+            },
+          ),
+          SizedBox(height: 10),
           Text(
             "Username",
             style: TextStyle(
@@ -32,7 +54,7 @@ class _SignUpFormState extends State<SignUpForm> {
           ),
           SizedBox(height: 14),
           CustomTextField(
-            textEditingController: usernameEmailController,
+            textEditingController: usernameController,
             isObsecure: false,
             obsecureIcon: false,
             onChanged: (value) {
@@ -117,6 +139,33 @@ class _SignUpFormState extends State<SignUpForm> {
             textEditingController: passwordController,
             isObsecure: true,
             obsecureIcon: true,
+            onChanged: (value) {
+              BlocProvider.of<AuthBloc>(context)
+                  .add(PasswordValidate(password: value));
+            },
+          ),
+          BlocBuilder<AuthBloc, AuthState>(
+            builder: (context, state) {
+              if (state is PasswordNotValidState) {
+                return Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 8, 0, 0),
+                  child: Container(
+                    width: 320,
+                    child: Text(
+                      state.message,
+                      style: TextStyle(
+                          color: Colors.redAccent,
+                          fontFamily: "SF-PRO-TEXT",
+                          fontSize: 12),
+                    ),
+                  ),
+                );
+              } else if (state is PasswordValidOfAuthState) {
+                return Container();
+              } else {
+                return Container();
+              }
+            },
           ),
           SizedBox(height: 14),
           Text(
@@ -131,10 +180,44 @@ class _SignUpFormState extends State<SignUpForm> {
             textEditingController: confirmPasswordController,
             isObsecure: true,
             obsecureIcon: true,
+            onChanged: (value) {
+              BlocProvider.of<AuthBloc>(context).add(ConfirmPasswordValidate(
+                  password: passwordController.text, confirmPassword: value));
+            },
+          ),
+          BlocBuilder<AuthBloc, AuthState>(
+            builder: (context, state) {
+              if (state is PasswordNotSameState) {
+                return Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 8, 0, 0),
+                  child: Container(
+                    width: 320,
+                    child: Text(
+                      state.message,
+                      style: TextStyle(
+                          color: Colors.redAccent,
+                          fontFamily: "SF-PRO-TEXT",
+                          fontSize: 12),
+                    ),
+                  ),
+                );
+              } else if (state is PasswordMatchedState) {
+                return Container();
+              } else {
+                return Container();
+              }
+            },
           ),
           SizedBox(height: 20),
           InkWell(
-            onTap: () {},
+            onTap: () {
+              BlocProvider.of<AuthBloc>(context)
+                ..add(SignUpCLickedEvent(
+                    username: usernameController.text,
+                    email: emailController.text,
+                    password: passwordController.text,
+                    confrimPassword: confirmPasswordController.text));
+            },
             child: Container(
               width: 320,
               height: 32,

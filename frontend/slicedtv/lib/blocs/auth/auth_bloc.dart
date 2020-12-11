@@ -30,6 +30,20 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       } else {
         yield EmailValidState();
       }
+    } else if (event is PasswordValidate) {
+      if ((event.password.length < 6) || (event.password.length > 25)) {
+        yield PasswordNotValidState(
+            message: "*Password must be between 6 and 25 characters.");
+      } else {
+        yield PasswordValidOfAuthState();
+      }
+    } else if (event is ConfirmPasswordValidate) {
+      if (event.password != event.confirmPassword) {
+        yield PasswordNotSameState(
+            message: "*Confirmation password must be same.");
+      } else {
+        yield PasswordMatchedState();
+      }
     } else if (event is SignUpCLickedEvent) {
       yield* mapSignUpEventToState(
           authModel: AuthModel(
@@ -37,6 +51,21 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
               email: event.email,
               password: event.password,
               confirmPassword: event.confrimPassword));
+    } else if (event is LoginClicekdEvent) {
+      if (event.usernameEmail.length < 4) {
+        yield LoginError(
+            errorMessage: "*Usernames must be between 4 and 25 characters.");
+      } else {
+        if (!EmailValidator.validate(event.usernameEmail)) {
+          yield* mapLoginEventToState(
+              authModel: AuthModel(
+                  username: event.usernameEmail, password: event.password));
+        } else {
+          yield* mapLoginEventToState(
+              authModel: AuthModel(
+                  email: event.usernameEmail, password: event.password));
+        }
+      }
     }
   }
 
@@ -48,7 +77,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       yield EmailNotValidState(message: "*Please enter a valid email.");
     } else if ((authModel.password.length < 6) ||
         (authModel.password.length > 25)) {
+      yield PasswordNotValidState(
+          message: "*Password must be between 6 and 25 characters.");
     } else if (authModel.password != authModel.confirmPassword) {
+      yield PasswordNotSameState(
+          message: "*Confirmation password must be same.");
     } else {
       yield SignUpLoading();
       try {
@@ -57,6 +90,21 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         yield SignUpSuccess(authModel: _authModel);
       } catch (e) {
         yield SignUpError(errorMessage: e.toString());
+      }
+    }
+  }
+
+  Stream<AuthState> mapLoginEventToState({AuthModel authModel}) async* {
+    if ((authModel.password.length < 6) || (authModel.password.length > 25)) {
+      yield PasswordNotValidState(
+          message: "*Password must be between 6 and 25 characters.");
+    } else {
+      yield LoginLoading();
+      try {
+        AuthModel _authModel = await authProvider.login(authModel: authModel);
+        yield LoginSuccess(authModel: _authModel);
+      } catch (e) {
+        yield LoginError(errorMessage: e.toString());
       }
     }
   }

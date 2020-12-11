@@ -12,6 +12,15 @@ class SlicedTVDef extends StatefulWidget {
 }
 
 class _SlicedTVDefState extends State<SlicedTVDef> {
+  String description;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    description =
+        "Sliced TV is a entertainment service with an evolving streaming service offering the\nmost compelling selection of TV shows, movies, anime, documentaries and shared\nvirtual living room watch party to watch together, play together and be to together with\nfriends whatever they are.";
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -36,7 +45,9 @@ class _SlicedTVDefState extends State<SlicedTVDef> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Text(
-                "Sliced TV is a entertainment service with an evolving streaming service offering the\nmost compelling selection of TV shows, movies, anime, documentaries and shared\nvirtual living room watch party to watch together, play together and be to together with\nfriends whatever they are.",
+                !ScreenConfig().isTablet() && !ScreenConfig().isMobile()
+                    ? description
+                    : description.replaceAll("\n", " "),
                 style: TextStyle(
                   color: ColorPalette.greyLight,
                   fontFamily: "SF-PRO-TEXT",

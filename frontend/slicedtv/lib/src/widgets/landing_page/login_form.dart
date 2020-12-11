@@ -19,7 +19,29 @@ class _LoginFormState extends State<LoginForm> {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(height: 20),
+          SizedBox(height: 10),
+          BlocBuilder<AuthBloc, AuthState>(
+            builder: (context, state) {
+              if (state is LoginError) {
+                return Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 8, 0, 0),
+                  child: Container(
+                    width: 320,
+                    child: Text(
+                      state.errorMessage,
+                      style: TextStyle(
+                          color: Colors.redAccent,
+                          fontFamily: "SF-PRO-TEXT",
+                          fontSize: 12),
+                    ),
+                  ),
+                );
+              } else {
+                return Container();
+              }
+            },
+          ),
+          SizedBox(height: 10),
           Text(
             "Username or Email",
             style: TextStyle(
@@ -47,7 +69,33 @@ class _LoginFormState extends State<LoginForm> {
             textEditingController: passwordController,
             isObsecure: true,
             obsecureIcon: true,
-            onChanged: (value) {},
+            onChanged: (value) {
+              BlocProvider.of<AuthBloc>(context)
+                  .add(PasswordValidate(password: value));
+            },
+          ),
+          BlocBuilder<AuthBloc, AuthState>(
+            builder: (context, state) {
+              if (state is PasswordNotValidState) {
+                return Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 8, 0, 0),
+                  child: Container(
+                    width: 320,
+                    child: Text(
+                      state.message,
+                      style: TextStyle(
+                          color: Colors.redAccent,
+                          fontFamily: "SF-PRO-TEXT",
+                          fontSize: 12),
+                    ),
+                  ),
+                );
+              } else if (state is PasswordValidOfAuthState) {
+                return Container();
+              } else {
+                return Container();
+              }
+            },
           ),
           SizedBox(height: 10),
           Text("Forget Password?",
@@ -57,7 +105,12 @@ class _LoginFormState extends State<LoginForm> {
                   fontSize: 12)),
           SizedBox(height: 20),
           InkWell(
-            onTap: () {},
+            onTap: () {
+              BlocProvider.of<AuthBloc>(context)
+                ..add(LoginClicekdEvent(
+                    usernameEmail: usernameEmailController.text,
+                    password: passwordController.text));
+            },
             child: Container(
               width: 320,
               height: 32,

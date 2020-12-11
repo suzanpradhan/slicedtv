@@ -11,8 +11,8 @@ class AuthModel {
   }
 
   Map<String, dynamic> toJson() => {
-        "username": this.username,
-        "email": this.email,
+        "username": this.username ?? "",
+        "email": this.email ?? "",
         "password": this.password
       };
 }
