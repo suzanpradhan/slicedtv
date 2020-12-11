@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 from pathlib import Path
 import os
 import datetime
+from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -22,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'r0q6enq@0=$svikbjf$2-+_wc9uff)p4ucwrmkax2-ytj3wh1_'
+SECRET_KEY = config('DJANGO_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -43,12 +44,13 @@ INSTALLED_APPS = [
     'user',
     'djongo',
     'subscription',
-    # 'episodes',
-    # 'movie',
-    # 'review',
-    # 'series',
-    # 'slice',
-    # 'history',
+    #'episodes',
+    #'movie',
+    #'review',
+    #'series',
+    #'slice',
+    #'history',
+    
     
 ]
 
@@ -86,15 +88,15 @@ WSGI_APPLICATION = 'slicedtv.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
+
 DATABASES = {
     'default': {
         'ENGINE': 'djongo',
-        'NAME': 'slicedtv_client',
+        'NAME': config('DATABASE_NAME'),
         'ENFORCE_SCHEMA': False,
-        'HOST': 'mongodb+srv://slicedtv_admin:dev4780@cluster0.zxwvu.mongodb.net/slicedtv_client?retryWrites=true&w=majority',
-        'USER': 'slicedtv_admin',
-        'PASSWORD': 'dev4780',
-
+        'HOST': config('HOST'),
+        'USER': config('DATABASE_USERNAME'),
+        'PASSWORD': config('DATABASE_PASSWORD'),
     }
 }
 
@@ -161,3 +163,4 @@ SIMPLE_JWT = {
     'REFRESH_TOKEN_LIFETIME': datetime.timedelta(days=1),
     'ROTATE_REFRESH_TOKENS': True,
 }
+
