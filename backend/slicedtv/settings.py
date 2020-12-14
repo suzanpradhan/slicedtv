@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'series',
     'slice',
     'history',
+    'subscription_history',
 ]
 
 MIDDLEWARE = [
