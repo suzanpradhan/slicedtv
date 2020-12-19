@@ -323,3 +323,28 @@ class CheckUsernameExistAPIView(generics.GenericAPIView):
                 'message': message,
                 'response': serializer.errors,
             }, status=status.HTTP_400_BAD_REQUEST)
+
+
+class UserLogoutAPIView(generics.GenericAPIView):
+    serializer_class = serializers.UserLogoutSerializer
+
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return response.Response({
+                'status': status.HTTP_200_OK,
+                'message': 'Success',
+                'response': {},
+            }, status=status.HTTP_200_OK)
+        else:
+            message = 'Failed'
+            if "errors" in serializer._errors:
+                message = serializer._errors['errors'][0]
+            return response.Response({
+                'status': status.HTTP_400_BAD_REQUEST,
+                'message': message,
+                'response': serializer.errors,
+            }, status=status.HTTP_400_BAD_REQUEST)
