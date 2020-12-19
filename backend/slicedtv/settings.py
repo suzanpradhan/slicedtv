@@ -42,7 +42,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'user',
-    'djongo',
     'subscription',
     'episodes',
     'movie',
@@ -87,18 +86,26 @@ WSGI_APPLICATION = 'slicedtv.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
-
+# For Local host
 DATABASES = {
     'default': {
-        'ENGINE': 'djongo',
-        'NAME': config('DATABASE_NAME'),
-        'ENFORCE_SCHEMA': False,
-        'HOST': config('HOST'),
-        'USER': config('DATABASE_USERNAME'),
-        'PASSWORD': config('DATABASE_PASSWORD'),
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'slicedtv',
+        'USER': 'postgres',
+        'PASSWORD': 'root',
+        'HOST': '127.0.0.1',
+        'PORT': '5433',
     }
 }
 
+# For Heroku Postgres
+"""
+! This is a comment
+import dj_database_url
+db_from_env = dj_database_url.config(conn_max_age=600)
+DATABASE['defaults'].update(db_from_env)
+
+"""
 
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
@@ -153,8 +160,8 @@ REST_FRAMEWORK = {
 # Email Settings
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = os.environ.get('EMAIL_USER')
-EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_PASS')
+EMAIL_HOST_USER = config('EMAIL_USER')
+EMAIL_HOST_PASSWORD = config('EMAIL_PASS')
 EMAIL_PORT = 587
 
 # SIMPLE_JWT
@@ -163,4 +170,3 @@ SIMPLE_JWT = {
     'REFRESH_TOKEN_LIFETIME': datetime.timedelta(days=1),
     'ROTATE_REFRESH_TOKENS': True,
 }
-

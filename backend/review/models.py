@@ -1,5 +1,5 @@
 # #External Import
-from djongo import models
+from django.db import models
 
 # Internal Import
 from user.models import User
@@ -10,7 +10,7 @@ from series.models import Series
 class Review(models.Model):
     review_title = models.CharField(max_length=255)
     description = models.TextField()
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     movie = models.ForeignKey(
         Movie, on_delete=models.CASCADE, null=True, blank=True)
     series = models.ForeignKey(

@@ -1,5 +1,5 @@
 # External Import
-from djongo import models
+from django.db import models
 
 # Internal Import
 from series.models import Series

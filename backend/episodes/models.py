@@ -1,4 +1,4 @@
-from djongo import models
+from django.db import models
 from series.models import Series
 from review.models import Review
 
@@ -7,7 +7,7 @@ class Episode(models.Model):
     episode_id=                 models.IntegerField()
     episode_name=               models.CharField(max_length=255)
     episode_description=        models.TextField()
-    episode_length=             models.TimeField()
+    episode_length=             models.DurationField()
     episode_date=               models.DateField()
     episode_link=               models.URLField() 
     
