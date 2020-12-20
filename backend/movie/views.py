@@ -58,3 +58,45 @@ class MovieAPIView(viewsets.ModelViewSet):
                 'message': message,
                 'response': serializer.errors,
             }, status=status.HTTP_400_BAD_REQUEST)
+
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        serializer = self.get_serializer(
+            instance, data=request.data, partial=partial)
+        if serializer.is_valid():
+            self.perform_update(serializer)
+            return response.Response({
+                'status': status.HTTP_200_OK,
+                'message': 'Success',
+                'response': serializer.data,
+            }, status=status.HTTP_200_OK)
+        else:
+            message = 'Invalid'
+            if "errors" in serializer._errors:
+                message = serializer._errors['errors'][0]
+            return response.Response({
+                'status': status.HTTP_400_BAD_REQUEST,
+                'message': message,
+                'response': serializer.errors,
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+    def perform_update(self, serializer):
+        serializer.save()
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        print('hello')
+        if instance:
+            self.perform_destroy(instance)
+            return response.Response({
+                'status': status.HTTP_200_OK,
+                'message': 'Delete Successful',
+                'response': {},
+            }, status=status.HTTP_200_OK)
+        else:
+            return response.Response({
+                'status': status.HTTP_404_NOT_FOUND,
+                'message': 'Error Occurred',
+                'response': {},
+            }, status=status.HTTP_404_NOT_FOUND)
