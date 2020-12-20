@@ -104,6 +104,7 @@ class MovieSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         """ Updating the Movie Data """
+        # Checking what field user have sent during patch request.
         genres_exist = False
         languages_exist = False
         gallerys_exist = False

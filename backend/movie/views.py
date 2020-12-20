@@ -86,7 +86,6 @@ class MovieAPIView(viewsets.ModelViewSet):
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
-        print('hello')
         if instance:
             self.perform_destroy(instance)
             return response.Response({
