@@ -14,7 +14,6 @@ class EpisodeAPIView(viewsets.ModelViewSet):
     serializer_class = serializers.EpisodeSerializer
     queryset = Episode.objects.all()
 
-    """
     def get_permissions(self):
         if self.action == 'list' or self.action == 'retrieve':
             permission_classes = (permissions.IsAuthenticated,)
@@ -23,7 +22,6 @@ class EpisodeAPIView(viewsets.ModelViewSet):
             permission_classes = (permissions.IsAdminUser,)
             # permission_classes = (permissions.AllowAny,) # Only For Test Purpose
         return [permission() for permission in permission_classes]
-    """
 
     def list(self, request):
         queryset = self.get_queryset()
