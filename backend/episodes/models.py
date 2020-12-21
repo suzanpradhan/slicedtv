@@ -12,4 +12,4 @@ class Episode(models.Model):
     episode_link=               models.URLField() 
     
     def __str__(self):
-        return self.series.series_name+" "+self.episode_id
+        return self.series.series_name+" "+str(self.episode_id)
