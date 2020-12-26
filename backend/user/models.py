@@ -1,5 +1,5 @@
 # External Import
-from djongo import models
+from django.db import models
 from django.contrib.auth.models import (
     AbstractBaseUser,
     BaseUserManager,
@@ -53,7 +53,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     updated_at = models.DateTimeField(auto_now=True)
     is_staff = models.BooleanField(default=False)
     subscription = models.ForeignKey(
-        Subscription, on_delete=models.SET_NULL, null=True)
+        Subscription, on_delete=models.SET_NULL, null=True, blank=True)
 
     objects = UserManager()
     USERNAME_FIELD = 'username'

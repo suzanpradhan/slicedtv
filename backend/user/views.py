@@ -10,7 +10,8 @@ from django.utils.encoding import smart_str, force_str, smart_bytes, DjangoUnico
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from rest_framework import permissions
 import json
-
+from django.shortcuts import redirect
+import os
 
 # Internal Import
 from . import serializers
@@ -151,7 +152,8 @@ class RequestUserPasswordResetByEmail(generics.GenericAPIView):
                 current_site = get_current_site(request=request).domain
                 relative_link = reverse(
                     'confirm-password-reset', kwargs={'uidb64': uidb64, 'token': token})
-                absolute_url = f"http://{current_site}{relative_link}"
+                redirect_url = request.data.get('redirect_url', '')
+                absolute_url = f"http://{current_site}{relative_link}?redirect_url={redirect_url}"
                 email_body = f"Namaste {current_user.username}\n Use link below to Reset your Password.\n{absolute_url}"
                 email_message = {
                     'email_body': email_body,
@@ -183,30 +185,29 @@ class ResetPasswordTokenCheckAPI(generics.GenericAPIView):
 
     def get(self, request, uidb64, token):
         """ Check if the token is valid  """
+
+        redirect_url = request.GET.get('redirect_url')
+
         try:
             id = smart_bytes(urlsafe_base64_decode(uidb64))
             current_user = models.User.objects.get(id=id)
 
             if not PasswordResetTokenGenerator().check_token(user=current_user, token=token):
-                return response.Response({
-                    'status': status.HTTP_400_BAD_REQUEST,
-                    'message': 'Token is Not valid.',
-                    'response': {'errors': 'Token is not valid, Request a new one'},
-                }, status=status.HTTP_400_BAD_REQUEST)
 
-            return response.Response({
-                'success': True,
-                'message': 'Credentials Valid',
-                'uidb64': uidb64,
-                'token': token,
-            }, status=status.HTTP_200_OK)
+                if redirect_url and len(redirect_url) > 3:
+                    return redirect(redirect_url+'?token_valid=False')
+                else:
+                    return redirect(os.environ.get('FRONTEND_URL', '')+"token_valid=False")
+
+            if len(redirect_url) > 3:
+                url_message = f"{redirect_url}?token_valid=True&?message=Credentails Valid&?uidb64={uidb64}&?token={token}"
+                return redirect(url_message)
+            else:
+                return redirect(os.environ.get('FRONTEND_URL', '')+"token_valid=False")
 
         except DjangoUnicodeDecodeError as identifier:
-            return response.Response({
-                'status': status.HTTP_400_BAD_REQUEST,
-                'message': 'Token is Not valid.',
-                'response': {'errors': 'Token is not valid, Request a new one'},
-            }, status=status.HTTP_400_BAD_REQUEST)
+            if not PasswordResetTokenGenerator().check_token(current_user):
+                return redirect(os.environ.get('FRONTEND_URL', '')+"token_valid=False")
 
 
 class ChangeUserPasswordAPI(generics.GenericAPIView):
@@ -268,12 +269,26 @@ class GetUserSubscriptionTypeAPIView(generics.GenericAPIView):
     def get(self, request):
         """ GET Method for subscription """
         current_user = request.user
-        subscription_type = current_user.subscription.subscription_type
-        return response.Response({
-            'status': status.HTTP_200_OK,
-            'message': subscription_type,
-            'response': {'subscription_type': subscription_type},
-        }, status=status.HTTP_200_OK)
+        if request.user.subscription:
+            subscription_type = current_user.subscription.subscription_type
+            subscription_name = current_user.subscription.subscription_name
+            return response.Response({
+                'status': status.HTTP_200_OK,
+                'message': subscription_type,
+                'response': {
+                    'subscription_type': subscription_type,
+                    'subscription_name': subscription_name
+                },
+            }, status=status.HTTP_200_OK)
+        else:
+            return response.Response({
+                'status': status.HTTP_204_NO_CONTENT,
+                'message': 'No Subscription',
+                'response': {
+                    'subscription_type': 'Not Subscribed Yet',
+                    'subscription_name': 'No Subscription'
+                },
+            }, status=status.HTTP_200_OK)
 
 
 class CheckUsernameExistAPIView(generics.GenericAPIView):
@@ -302,6 +317,31 @@ class CheckUsernameExistAPIView(generics.GenericAPIView):
                 }, status=status.HTTP_404_NOT_FOUND)
         else:
             message = 'Invalid'
+            if "errors" in serializer._errors:
+                message = serializer._errors['errors'][0]
+            return response.Response({
+                'status': status.HTTP_400_BAD_REQUEST,
+                'message': message,
+                'response': serializer.errors,
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+
+class UserLogoutAPIView(generics.GenericAPIView):
+    serializer_class = serializers.UserLogoutSerializer
+
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return response.Response({
+                'status': status.HTTP_200_OK,
+                'message': 'Success',
+                'response': {},
+            }, status=status.HTTP_200_OK)
+        else:
+            message = 'Failed'
             if "errors" in serializer._errors:
                 message = serializer._errors['errors'][0]
             return response.Response({

@@ -1,4 +1,4 @@
-from djongo import models
+from django.db import models
 from series.models import Series
 from review.models import Review
 
@@ -6,11 +6,10 @@ class Episode(models.Model):
     series=                     models.ForeignKey(Series, on_delete=models.CASCADE)
     episode_id=                 models.IntegerField()
     episode_name=               models.CharField(max_length=255)
-    episode_length=             models.TimeField()
+    episode_description=        models.TextField()
+    episode_length=             models.DurationField()
     episode_date=               models.DateField()
-    episode_link=               models.URLField() #! Should use file field
-    episode_rating=             models.IntegerField()
-    review=                     models.ForeignKey(Review, on_delete=models.CASCADE)
+    episode_link=               models.URLField() 
     
     def __str__(self):
-        return self.series.series_name+" "+self.episode_id
+        return self.series.series_name+" "+str(self.episode_id)

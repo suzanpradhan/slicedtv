@@ -1,5 +1,8 @@
 from django.urls import path
-from subscription.views import ListDefaultSubscription as subs
+from . import views
 
 urlpatterns = [
-    path('getdefsubs/', subs.as_view(), name='default_subs'),]
+    path('get-all-subscriptions/', views.ListAllSubscriptionAPIView.as_view(),
+         name='get-all-subscriptions'),
+
+]

@@ -23,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = config('DJANGO_SECRET_KEY')
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -41,8 +41,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'rest_framework_simplejwt.token_blacklist',
     'user',
-    'djongo',
     'subscription',
     'decouple',
     'corsheaders',
@@ -54,6 +54,13 @@ INSTALLED_APPS = [
     #'history',
     
     
+    'episodes',
+    'movie',
+    'review',
+    'series',
+    'slice',
+    'history',
+    'subscription_history',
 ]
 
 MIDDLEWARE = [
@@ -92,18 +99,26 @@ WSGI_APPLICATION = 'slicedtv.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
-
+# For Local host
 DATABASES = {
     'default': {
-        'ENGINE': 'djongo',
-        'NAME': config('DATABASE_NAME'),
-        'ENFORCE_SCHEMA': False,
-        'HOST': config('HOST'),
-        'USER': config('DATABASE_USERNAME'),
-        'PASSWORD': config('DATABASE_PASSWORD'),
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'slicedtv',
+        'USER': 'postgres',
+        'PASSWORD': 'root',
+        'HOST': '127.0.0.1',
+        'PORT': '5433',
     }
 }
 
+# For Heroku Postgres
+"""
+! This is a comment
+import dj_database_url
+db_from_env = dj_database_url.config(conn_max_age=600)
+DATABASE['defaults'].update(db_from_env)
+
+"""
 
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
@@ -151,6 +166,7 @@ AUTH_USER_MODEL = 'user.User'
 # RestFramework settings
 REST_FRAMEWORK = {
     'NON_FIELD_ERRORS_KEY': 'errors',
+    'EXCEPTION_HANDLER': 'slicedtv.utils.custom_exception_handler',
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     )
@@ -169,4 +185,3 @@ SIMPLE_JWT = {
     'REFRESH_TOKEN_LIFETIME': datetime.timedelta(days=1),
     'ROTATE_REFRESH_TOKENS': True,
 }
-

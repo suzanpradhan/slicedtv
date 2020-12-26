@@ -1,24 +1,23 @@
 # External Import
-from djongo import models
+from django.db import models
 
 # Internal Import
-from user.models import User
+
 
 class Cast(models.Model):
-    cast_name =      models.CharField(max_length=200)
-    cast_img =  models.ImageField()
-
-    class Meta:
-        abstract = True
+    cast_name = models.CharField(max_length=200)
+    cast_image_url = models.URLField()
 
     def __str__(self):
-        return self.cast
+        return self.cast_name
+
 
 class Gallery(models.Model):
-    image = models.ImageField()
+    image_name = models.CharField(max_length=200)
+    image_url = models.URLField()
 
     def __str__(self):
-        return self.image
+        return self.image_name
 
 
 class Genre(models.Model):
@@ -26,6 +25,7 @@ class Genre(models.Model):
 
     def __str__(self):
         return self.genre
+
 
 class Language(models.Model):
     language = models.CharField(max_length=200)

@@ -13,6 +13,7 @@ urlpatterns = [
     path('register/', views.UserRegistrationView.as_view(), name='register'),
     path('verify-email/', views.VerifyEmail.as_view(), name='verify-email'),
     path('login/', views.UserLoginAPIView.as_view(), name='login'),
+    path('logout/', views.UserLogoutAPIView.as_view(), name='logout'),
     path('request-password-reset/', views.RequestUserPasswordResetByEmail.as_view(),
          name='request-password-reset'),
     path('confirm-password-reset/<uidb64>/<token>/',
