@@ -34,3 +34,14 @@ class LanguageSerializer(serializers.ModelSerializer):
         extra_kwargs = {
             'id': {'read_only': True}
         }
+
+
+class GallerySerializer(serializers.ModelSerializer):
+    """ Serializer for Gallery Model """
+
+    class Meta:
+        model = Gallery
+        fields = ('id', 'image_name', 'image_url')
+        extra_kwargs = {
+            'id': {'read_only': True}
+        }
