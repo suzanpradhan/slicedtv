@@ -23,3 +23,14 @@ class GenreSerializer(serializers.ModelSerializer):
         extra_kwargs = {
             'id': {'read_only': True}
         }
+
+
+class LanguageSerializer(serializers.ModelSerializer):
+    """ Serializer for Language Model """
+
+    class Meta:
+        model = Language
+        fields = ('id', 'language')
+        extra_kwargs = {
+            'id': {'read_only': True}
+        }

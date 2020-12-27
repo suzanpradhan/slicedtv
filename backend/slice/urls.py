@@ -13,8 +13,14 @@ cast_router.register('', views.CastAPIView)
 genre_router = DefaultRouter()
 genre_router.register('', views.GenreAPIView)
 
+# Language Router
+language_router = DefaultRouter()
+language_router.register('', views.LanguageAPIView)
+
 
 urlpatterns = [
     path('casts/', include(cast_router.urls)),
     path('genres/', include(genre_router.urls)),
+    path('languages/', include(language_router.urls)),
+
 ]
