@@ -216,7 +216,6 @@ class CheckTokenVerifySerializer(serializers.Serializer):
 
     def validate(self, attrs):
         UntypedToken(attrs['token'])
-        print(attrs)
         if 'token' in attrs:
             attrs['status'] = status.HTTP_200_OK
             attrs['message'] = 'Token is valid'

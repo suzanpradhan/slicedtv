@@ -24,5 +24,6 @@ urlpatterns = [
     path('token/refresh/', TokenRefreshView.as_view(), name='refresh-token'),
     path('subscription-type/', views.GetUserSubscriptionTypeAPIView.as_view(),
          name='subscription-type'),
-    path('check-token-valid/', views.CheckTokenVerifyView.as_view(), name='check-token-valid'),
+    path('check-token-valid/', views.CheckTokenVerifyView.as_view(),
+         name='check-token-valid'),
 ]
