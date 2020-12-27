@@ -9,25 +9,63 @@ from slice.models import Genre, Language, Gallery, Cast
 class GenreSerializer(serializers.ModelSerializer):
     class Meta:
         model = Genre
-        fields = ('genre',)
+        fields = ('id', 'genre')
+        extra_kwargs = {
+            'genre': {
+                'read_only': True,
+            },
+            'id': {
+                'read_only': False,
+            }
+        }
 
 
 class LanguageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Language
-        fields = ('language',)
+        fields = ('id', 'language',)
+        extra_kwargs = {
+            'language': {
+                'read_only': True,
+            },
+            'id': {
+                'read_only': False,
+            }
+        }
 
 
 class GallerySerializer(serializers.ModelSerializer):
     class Meta:
         model = Gallery
-        fields = ('image_name', 'image_url')
+        fields = ('id', 'image_name', 'image_url')
+        extra_kwargs = {
+            'image_name': {
+                'read_only': True,
+            },
+            'image_url': {
+                'read_only': True,
+            },
+            'id': {
+                'read_only': False,
+            }
+        }
 
 
 class CastSerializer(serializers.ModelSerializer):
     class Meta:
         model = Cast
-        fields = ('cast_name', 'cast_image_url')
+        fields = ('id', 'cast_name', 'cast_image_url')
+        extra_kwargs = {
+            'cast_name': {
+                'read_only': True,
+            },
+            'cast_image_url': {
+                'read_only': True,
+            },
+            'id': {
+                'read_only': False,
+            }
+        }
 
 
 class MovieSerializer(serializers.ModelSerializer):
@@ -62,43 +100,38 @@ class MovieSerializer(serializers.ModelSerializer):
         # Creating Genre Object
         for genre_data in genres_data:
             tuple_list = list(genre_data.items())
-            actual_genre = tuple_list[0][1].lower().strip()
-            exist = Genre.objects.filter(genre=actual_genre)
-            if not exist:
-                Genre.objects.create(genre=actual_genre)
-            genre = Genre.objects.get(genre=actual_genre)
-            movie.genres.add(genre)
+            genre_id = tuple_list[0][1]
+            exist = Genre.objects.filter(id=genre_id)
+            if exist:
+                genre = Genre.objects.get(id=genre_id)
+                movie.genres.add(genre)
 
         # Creating languages_data
         for language_data in languages_data:
             tuple_list = list(language_data.items())
-            actual_language = tuple_list[0][1].lower().strip()
-            exist = Language.objects.filter(language=actual_language)
-            if not exist:
-                Language.objects.create(language=actual_language)
-            language = Language.objects.get(language=actual_language)
-            movie.languages.add(language)
+            language_id = tuple_list[0][1]
+            exist = Language.objects.filter(id=language_id)
+            if exist:
+                language = Language.objects.get(id=language_id)
+                movie.languages.add(language)
 
         # Creating gallerys_data
         for gallery_data in gallerys_data:
             tuple_list = list(gallery_data.items())
-            image_name = tuple_list[0][1]
-            image_url = tuple_list[1][1]
-            image = Gallery.objects.create(
-                image_name=image_name, image_url=image_url)
-            movie.gallerys.add(image)
+            gallery_id = tuple_list[0][1]
+            exist = Gallery.objects.filter(id=gallery_id)
+            if exist:
+                image = Gallery.objects.get(id=gallery_id)
+                movie.gallerys.add(image)
 
         # For Cast
         for cast_data in casts_data:
             tuple_list = list(cast_data.items())
-            cast_name = tuple_list[0][1]
-            cast_url = tuple_list[1][1]
-            exist = Cast.objects.filter(cast_name=cast_name)
-            if not exist:
-                Cast.objects.create(cast_name=cast_name,
-                                    cast_image_url=cast_url)
-            cast = Cast.objects.get(cast_name=cast_name)
-            movie.casts.add(cast)
+            cast_id = tuple_list[0][1]
+            exist = Cast.objects.filter(id=cast_id)
+            if exist:
+                cast = Cast.objects.get(id=cast_id)
+                movie.casts.add(cast)
 
         return movie
 
@@ -125,61 +158,44 @@ class MovieSerializer(serializers.ModelSerializer):
         instance = super(MovieSerializer, self).update(
             instance, validated_data)
 
-        if not self.partial:
-            # If the request method id PUT then all the field will be clear.
-            instance.genres.clear()
-            instance.languages.clear()
-            instance.casts.clear()
-            instance.gallerys.clear()
-
         # Updating Genre
         if genres_exist:
+            instance.genres.clear()
             for genre_data in genres_data:
                 genre_qs = Genre.objects.filter(
-                    genre__iexact=genre_data['genre'])
+                    id=genre_data['id'])
                 if genre_qs.exists():
                     genre = genre_qs.first()
-                else:
-                    lower_genre = genre_data['genre'].lower().strip()
-                    genre = Genre.objects.create(lower_genre)
-
-                instance.genres.add(genre)
+                    instance.genres.add(genre)
 
         # Updating Language
         if languages_exist:
+            instance.languages.clear()
             for language_data in languages_data:
                 language_qs = Language.objects.filter(
-                    language__iexact=language_data['language'])
+                    id=language_data['id'])
                 if language_qs.exists():
                     language = language_qs.first()
-                else:
-                    lower_language = language_data['language'].lower().strip()
-                    language = Language.objects.create(language=lower_language)
-
-                instance.languages.add(language)
+                    instance.languages.add(language)
 
         # Updating Gallery
         if gallerys_exist:
+            instance.gallerys.clear()
             for gallery_data in gallerys_data:
                 gallery_qs = Gallery.objects.filter(
-                    image_name__iexact=gallery_data['image_name'], image_url__iexact=gallery_data['image_url'])
+                    id=gallery_data['id'])
                 if gallery_qs.exists():
                     gallery = gallery_qs.first()
-                else:
-                    gallery = Gallery.objects.create(**gallery_data)
-
-                instance.gallerys.add(gallery)
+                    instance.gallerys.add(gallery)
 
         # Updating Cast
         if casts_exist:
+            instance.casts.clear()
             for cast_data in casts_data:
                 cast_qs = Cast.objects.filter(
-                    cast_name__iexact=cast_data['cast_name'])
+                    id=cast_data['id'])
                 if cast_qs.exists():
                     cast = cast_qs.first()
-                else:
-                    cast = Cast.objects.create(**cast_data)
-
-                instance.casts.add(cast)
+                    instance.casts.add(cast)
 
         return instance
