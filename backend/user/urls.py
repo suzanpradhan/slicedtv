@@ -1,7 +1,6 @@
 # External Import
 from django.urls import path
-from rest_framework_simplejwt.views import TokenRefreshView
-
+from rest_framework_simplejwt.views import TokenRefreshView, TokenVerifyView
 
 # Internal Import
 from . import views
@@ -25,4 +24,5 @@ urlpatterns = [
     path('token/refresh/', TokenRefreshView.as_view(), name='refresh-token'),
     path('subscription-type/', views.GetUserSubscriptionTypeAPIView.as_view(),
          name='subscription-type'),
+    path('check-token-valid/', views.CheckTokenVerifyView.as_view(), name='check-token-valid'),
 ]

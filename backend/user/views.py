@@ -12,6 +12,7 @@ from rest_framework import permissions
 import json
 from django.shortcuts import redirect
 import os
+from rest_framework_simplejwt.views import TokenVerifyView
 
 # Internal Import
 from . import serializers
@@ -349,3 +350,7 @@ class UserLogoutAPIView(generics.GenericAPIView):
                 'message': message,
                 'response': serializer.errors,
             }, status=status.HTTP_400_BAD_REQUEST)
+
+
+class CheckTokenVerifyView(TokenVerifyView):
+    serializer_class = serializers.CheckTokenVerifySerializer
