@@ -96,7 +96,6 @@ class MovieSerializer(serializers.ModelSerializer):
 
         # Creating Movie Object
         movie = Movie.objects.create(**validated_data)
-        movie.save()
         # Creating Genre Object
         for genre_data in genres_data:
             tuple_list = list(genre_data.items())
@@ -133,6 +132,7 @@ class MovieSerializer(serializers.ModelSerializer):
                 cast = Cast.objects.get(id=cast_id)
                 movie.casts.add(cast)
 
+        movie.save()
         return movie
 
     def update(self, instance, validated_data):
